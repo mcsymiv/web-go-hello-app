@@ -1,57 +1,70 @@
 package render
 
 import (
-	"fmt"
+	"bytes"
 	"html/template"
+	"log"
 	"net/http"
-
-	"github.com/mcsymiv/web-hello-world/pkg/er"
+	"path/filepath"
 )
 
-var templateCacheMap = make(map[string]*template.Template)
-
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	p, _ := template.ParseFiles("./templates/"+tmpl, "./templates/base.layout.tmpl")
-	err := p.Execute(w, nil)
-	er.CheckErr("error parsing template", err)
+	// create template cache
+	tmplCache, err := createTemplateCache()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// get template
+	t, ok := tmplCache[tmpl]
+	if !ok {
+		log.Fatal(err)
+	}
+
+	buf := new(bytes.Buffer)
+
+	err = t.Execute(buf, nil)
+	if err != nil {
+		log.Println(err)
+	}
+
+	// render template
+	_, err = buf.WriteTo(w)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
-func RenderCachedTemplate(w http.ResponseWriter, t string) {
-	var tmpl *template.Template
-	var err error
+func createTemplateCache() (map[string]*template.Template, error) {
+	tmplCache := map[string]*template.Template{}
+	// get all files with match *.page.tmpl from ./templates folder
+	pages, err := filepath.Glob("./templates/*.page.tmpl")
+	if err != nil {
+		return tmplCache, err
+	}
 
-	_, inMap := templateCacheMap[t]
-	if !inMap {
-		fmt.Println("Creating template and adding to cache")
-		err = createCachedTemplate(t)
+	// range through all files with match *.page.tmpl
+	for _, page := range pages {
+		name := filepath.Base(page)
+		tmplSet, err := template.New(name).ParseFiles(page)
 		if err != nil {
-			fmt.Printf("Unable create template in cache: %v", err)
+			return tmplCache, err
 		}
-	} else {
-		fmt.Println("Using cached template")
+
+		// look into layouts in ./template folder
+		layoutFiles, err := filepath.Glob("./templates/*.layout.tmpl")
+		if err != nil {
+			return tmplCache, err
+		}
+
+		if len(layoutFiles) > 0 {
+			tmplSet, err = tmplSet.ParseGlob("./templates/*.layout.tmpl")
+			if err != nil {
+				return tmplCache, err
+			}
+		}
+
+		tmplCache[name] = tmplSet
 	}
 
-	tmpl = templateCacheMap[t]
-
-	err = tmpl.Execute(w, nil)
-	if err != nil {
-		fmt.Printf("Unable to execute template parsing: %v", err)
-	}
-}
-
-func createCachedTemplate(t string) error {
-	templates := []string{
-		fmt.Sprintf("./templates/%s", t),
-		"./templates/base.layout.tmpl",
-	}
-
-	tmpl, err := template.ParseFiles(templates...)
-	if err != nil {
-		fmt.Printf("Unable to parse templates: %v", err)
-		return err
-	}
-
-	templateCacheMap[t] = tmpl
-
-	return nil
+	return tmplCache, nil
 }
