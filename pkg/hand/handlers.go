@@ -13,12 +13,12 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	//render.RenderTemplate(w, "home.page.tmpl")
-	render.RenderCachedTemplate(w, "home.page.tmpl")
+	render.RenderTemplate(w, "home.page.tmpl")
 }
 
 func About(w http.ResponseWriter, r *http.Request) {
 	//render.RenderTemplate(w, "about.page.tmpl")
-	render.RenderCachedTemplate(w, "about.page.tmpl")
+	render.RenderTemplate(w, "about.page.tmpl")
 }
 
 func Exit(w http.ResponseWriter, r *http.Request) {
