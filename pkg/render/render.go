@@ -6,35 +6,45 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/mcsymiv/web-hello-world/pkg/config"
 )
 
+var app *config.AppConfig
+
+// sets the config for the template package
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	// create template cache
-	tmplCache, err := createTemplateCache()
-	if err != nil {
-		log.Fatal(err)
+	var tmplCache map[string]*template.Template
+
+	if app.UseCache {
+		// get template cache from app config
+		tmplCache = app.TemplateCache
+	} else {
+		tmplCache, _ = CreateTemplateCache()
 	}
+
 	// get template
 	t, ok := tmplCache[tmpl]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("Could not get template from tmplCache")
 	}
 
 	buf := new(bytes.Buffer)
 
-	err = t.Execute(buf, nil)
-	if err != nil {
-		log.Println(err)
-	}
+	_ = t.Execute(buf, nil)
 
 	// render template
-	_, err = buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func createTemplateCache() (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	tmplCache := map[string]*template.Template{}
 	// get all files with match *.page.tmpl from ./templates folder
 	pages, err := filepath.Glob("./templates/*.page.tmpl")
