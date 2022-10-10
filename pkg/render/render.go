@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/mcsymiv/web-hello-world/pkg/config"
+	"github.com/mcsymiv/web-hello-world/pkg/models"
 )
 
 var app *config.AppConfig
@@ -17,7 +18,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+// AddDefaultTemplateData adds data that can be used across all templates
+func AddDefaultTemplateData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
+func RenderTemplate(w http.ResponseWriter, tmpl string, tmplData *models.TemplateData) {
 	var tmplCache map[string]*template.Template
 
 	if app.UseCache {
@@ -35,7 +41,11 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 
 	buf := new(bytes.Buffer)
 
-	_ = t.Execute(buf, nil)
+	// Add default data to template data
+	tmplData = AddDefaultTemplateData(tmplData)
+
+	// Render template
+	_ = t.Execute(buf, tmplData)
 
 	// render template
 	_, err := buf.WriteTo(w)
