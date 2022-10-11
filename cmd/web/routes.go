@@ -3,18 +3,23 @@ package main
 import (
 	"net/http"
 
-	"github.com/bmizerany/pat"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/mcsymiv/web-hello-world/pkg/config"
 	"github.com/mcsymiv/web-hello-world/pkg/hand"
 )
 
 func routes(app *config.AppConfig) http.Handler {
-	mux := pat.New()
+	var mux *chi.Mux = chi.NewRouter()
 
-	mux.Get("/", http.HandlerFunc(hand.Repo.Index))
-	mux.Get("/home", http.HandlerFunc(hand.Repo.Home))
-	mux.Get("/about", http.HandlerFunc(hand.Repo.About))
-	mux.Get("/exit", http.HandlerFunc(hand.Repo.Exit))
+	// Gracefully absorb panics and
+	// prints the stack trace
+	mux.Use(middleware.Recoverer)
+
+	mux.Get("/", hand.Repo.Index)
+	mux.Get("/home", hand.Repo.Home)
+	mux.Get("/about", hand.Repo.About)
+	mux.Get("/exit", hand.Repo.Exit)
 
 	return mux
 }
