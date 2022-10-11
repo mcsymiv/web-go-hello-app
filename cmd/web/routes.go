@@ -17,6 +17,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(middleware.Recoverer)
 	// CSRF
 	mux.Use(NoSurf)
+	// Session
+	mux.Use(SessionLoad)
 
 	mux.Get("/", hand.Repo.Index)
 	mux.Get("/home", hand.Repo.Home)
