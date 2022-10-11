@@ -12,9 +12,11 @@ import (
 func routes(app *config.AppConfig) http.Handler {
 	var mux *chi.Mux = chi.NewRouter()
 
-	// Gracefully absorb panics and
-	// prints the stack trace
+	// Middlewares
+	// Gracefully absorb panics and prints the stack trace
 	mux.Use(middleware.Recoverer)
+	// CSRF
+	mux.Use(NoSurf)
 
 	mux.Get("/", hand.Repo.Index)
 	mux.Get("/home", hand.Repo.Home)
