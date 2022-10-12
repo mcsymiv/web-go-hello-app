@@ -34,12 +34,16 @@ func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	var remoteIp string = r.RemoteAddr
+	repo.App.Session.Put(r.Context(), "remoteIp", remoteIp)
+
 	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
-	stringMap["test"] = "Passed string data to template"
+
+	stringMap["remoteIp"] = repo.App.Session.GetString(r.Context(), "remoteIp")
 
 	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,

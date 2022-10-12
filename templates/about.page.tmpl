@@ -5,7 +5,12 @@
 				<div class="row">
 						<div class="col">
 								<h1>About page</h1>
-								<p> This came from template data: {{ index .StringMap "test" }}
+								<p>This value comes from session: 
+									{{ if ne (index .StringMap "remoteIp") "" }}
+											<p>Your remote address is: {{index .StringMap "remoteIp"}}</p>
+									{{ else }}
+											<p>I don't know your IP address. Visit <a href="/home">Home page</a></p>
+									{{ end }}
 						</div>
 				</div>
 		</div>
