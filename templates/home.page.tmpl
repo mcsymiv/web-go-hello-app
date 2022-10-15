@@ -1,12 +1,24 @@
 {{template "base" .}}
 
-{{define "content"}}
-		<div class="container">
-				<div class="row">
-						<div class="col">
-								<h1>Home page</h1>
-								<p>This is home page</p>
-						</div>
-				</div>
+{{ define "title" }}
+	<title>Home</title>
+{{ end }}
+
+{{ define "content" }}
+	<div class="container">
+		<div class="row m-3">
+			<div class="col p-5">
+				<form>
+  					<div class="mb-3">
+    					<input type="text" class="form-control" id="search" aria-describedby="search">
+  					</div>
+  					<button type="submit" class="btn btn-primary">Search</button>
+				</form>
+			</div>
+			<div class="col p-5">
+				<h1>Home page</h1>
+				<p>This is home page</p>
+			</div>
 		</div>
-{{end}}
+	</div>
+{{ end }}
