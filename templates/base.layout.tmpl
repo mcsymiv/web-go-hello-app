@@ -71,24 +71,6 @@
 
 		<!-- custom js -->
 		<script>
-			const elem = document.getElementById("DatePicker");
-			const datepicker = new DateRangePicker(elem, {
-				format: "yyyy-mm-dd",
-				todayBtn: true,
-				prevArrow: '<',
-				nextArrow: '>',
-				clearBtn: true,
-				autohide: true,
-				todayBtnMode: 1,
-			});
-
-			elem.addEventListener("click", () => {
-				let pickerFooterButtons = document.querySelectorAll(".datepicker-controls .button");
-				pickerFooterButtons.forEach(btn => {
-					btn.classList.add("btn");
-				});
-			});
-
 			const Toast = Swal.mixin({
 				toast: true,
 				position: 'top-end',

@@ -37,7 +37,11 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	var remoteIp string = r.RemoteAddr
 	repo.App.Session.Put(r.Context(), "remoteIp", remoteIp)
 
-	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
+	render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{})
+}
+
+func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Posted to home route"))
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
@@ -45,13 +49,13 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 	stringMap["remoteIp"] = repo.App.Session.GetString(r.Context(), "remoteIp")
 
-	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{
+	render.RenderTemplate(w, r, "about.page.tmpl", &models.TemplateData{
 		StringMap: stringMap,
 	})
 }
 
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "contact.page.tmpl", &models.TemplateData{})
+	render.RenderTemplate(w, r, "contact.page.tmpl", &models.TemplateData{})
 }
 
 func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {

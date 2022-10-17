@@ -8,7 +8,8 @@
 	<div class="container">
 		<div class="row m-3">
 			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
-				<form>
+				<form action="/home" method="post">
+					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
 						<div class="form-row mt-2">
 							<div class="col">
@@ -35,4 +36,26 @@
 			</div>
 		</div>
 	</div>
+{{ end }}
+
+{{ define "js" }}
+	<script>
+		const elem = document.getElementById("DatePicker");
+			const datepicker = new DateRangePicker(elem, {
+				format: "yyyy-mm-dd",
+				todayBtn: true,
+				prevArrow: '<',
+				nextArrow: '>',
+				clearBtn: true,
+				autohide: true,
+				todayBtnMode: 1,
+			});
+
+			elem.addEventListener("click", () => {
+				let pickerFooterButtons = document.querySelectorAll(".datepicker-controls .button");
+				pickerFooterButtons.forEach(btn => {
+					btn.classList.add("btn");
+				});
+			});
+	</script>
 {{ end }}

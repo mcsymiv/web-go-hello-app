@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/justinas/nosurf"
 	"github.com/mcsymiv/web-hello-world/pkg/config"
 	"github.com/mcsymiv/web-hello-world/pkg/models"
 )
@@ -19,11 +20,12 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 // AddDefaultTemplateData adds data that can be used across all templates
-func AddDefaultTemplateData(td *models.TemplateData) *models.TemplateData {
+func AddDefaultTemplateData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, tmplData *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, tmplData *models.TemplateData) {
 	var tmplCache map[string]*template.Template
 
 	if app.UseCache {
@@ -42,7 +44,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, tmplData *models.Templat
 	buf := new(bytes.Buffer)
 
 	// Add default data to template data
-	tmplData = AddDefaultTemplateData(tmplData)
+	tmplData = AddDefaultTemplateData(tmplData, r)
 
 	// Render template
 	_ = t.Execute(buf, tmplData)
