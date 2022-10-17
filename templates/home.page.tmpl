@@ -1,4 +1,4 @@
-{{template "base" .}}
+{{ template "base" . }}
 
 {{ define "title" }}
 	<title>Home</title>
@@ -35,27 +35,4 @@
 			</div>
 		</div>
 	</div>
-
-{{ end }}
-
-{{ define "js" }}
-	<script>
-			const elem = document.getElementById("DatePicker");
-			const datepicker = new DateRangePicker(elem, {
-				format: "yyyy-mm-dd",
-				todayBtn: true,
-				prevArrow: '<',
-				nextArrow: '>',
-				clearBtn: true,
-				autohide: true,
-				todayBtnMode: 1,
-			});
-
-			elem.addEventListener("click", () => {
-				let pickerFooterButtons = document.querySelectorAll(".datepicker-controls .button");
-				pickerFooterButtons.forEach(btn => {
-					btn.classList.add("btn");
-				});
-			});
-	</script>
 {{ end }}

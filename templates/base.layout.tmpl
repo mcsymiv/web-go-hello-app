@@ -6,7 +6,8 @@
 		<meta name="viewport" content="width=device-width user-scalable=no initial-scale=1">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-		{{ block "title" . }} <!-- go tmpl title block --> {{ end }}
+		{{ block "title" . }} 
+	   	{{ end }}
 
 		<!-- bootstrap cdn -->
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" 
@@ -18,7 +19,8 @@
 		<!-- date picker cdn -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/css/datepicker-bs5.min.css">
 
-		{{ block "css" . }} <!-- go tmpl css block --> {{ end }}
+		{{ block "css" . }}
+		{{ end }}
 
 	</head>
 	<body>
@@ -44,7 +46,8 @@
 			</div>
 		</nav>
 
-		{{ block "content" . }} <!-- go tmpl content block --> {{ end }}
+		{{ block "content" . }}
+		{{ end }}
 
 		<footer>
 		</footer>
@@ -63,10 +66,29 @@
 		<!-- sweatAlert cdn js -->
 		<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-		{{ block "js" . }} <!-- go tmpl js block --> {{ end }}
+		{{ block "js" . }} 
+	   	{{ end }}
 
 		<!-- custom js -->
 		<script>
+			const elem = document.getElementById("DatePicker");
+			const datepicker = new DateRangePicker(elem, {
+				format: "yyyy-mm-dd",
+				todayBtn: true,
+				prevArrow: '<',
+				nextArrow: '>',
+				clearBtn: true,
+				autohide: true,
+				todayBtnMode: 1,
+			});
+
+			elem.addEventListener("click", () => {
+				let pickerFooterButtons = document.querySelectorAll(".datepicker-controls .button");
+				pickerFooterButtons.forEach(btn => {
+					btn.classList.add("btn");
+				});
+			});
+
 			const Toast = Swal.mixin({
 				toast: true,
 				position: 'top-end',
@@ -81,7 +103,7 @@
 					toast.addEventListener('mouseleave', Swal.resumeTimer);
 				}
 			});
-
+			
 			document.getElementById("toast").addEventListener("click", function() {
 				 Toast.fire({
 				  icon: 'success',

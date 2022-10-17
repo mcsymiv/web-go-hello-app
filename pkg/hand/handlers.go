@@ -50,6 +50,10 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+	render.RenderTemplate(w, "contact.page.tmpl", &models.TemplateData{})
+}
+
 func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {
 	os.Exit(0)
 }
