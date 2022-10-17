@@ -7,18 +7,55 @@
 {{ define "content" }}
 	<div class="container">
 		<div class="row m-3">
-			<div class="col p-5">
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
 				<form>
   					<div class="mb-3">
-    					<input type="text" class="form-control" id="search" aria-describedby="search">
+						<div class="form-row mt-2">
+							<div class="col">
+								<input type="text" class="form-control"  placeholder="Search..." name="search">
+							</div>
+						</div>
+						<div class="form-row input-group mt-2" id="DatePicker">
+							<div class="col">
+								<input type="text" placeholder="Start date" name="start" class="form-control">
+							</div>
+							<div class="col ms-1">
+								<input type="text"placeholder="End date" name="end" class="form-control">
+							</div>
+						</div>
   					</div>
-  					<button type="submit" class="btn btn-primary">Search</button>
+  					<button type="submit" class="btn btn-outline-primary">Search</button>
 				</form>
 			</div>
-			<div class="col p-5">
+
+			<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 p-4">
 				<h1>Home page</h1>
 				<p>This is home page</p>
+				<button id="toast" class="btn btn-outline-info">Click me</button>
 			</div>
 		</div>
 	</div>
+
+{{ end }}
+
+{{ define "js" }}
+	<script>
+			const elem = document.getElementById("DatePicker");
+			const datepicker = new DateRangePicker(elem, {
+				format: "yyyy-mm-dd",
+				todayBtn: true,
+				prevArrow: '<',
+				nextArrow: '>',
+				clearBtn: true,
+				autohide: true,
+				todayBtnMode: 1,
+			});
+
+			elem.addEventListener("click", () => {
+				let pickerFooterButtons = document.querySelectorAll(".datepicker-controls .button");
+				pickerFooterButtons.forEach(btn => {
+					btn.classList.add("btn");
+				});
+			});
+	</script>
 {{ end }}
