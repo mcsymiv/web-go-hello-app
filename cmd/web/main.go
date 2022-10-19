@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/mcsymiv/web-hello-world/pkg/config"
-	"github.com/mcsymiv/web-hello-world/pkg/hand"
-	"github.com/mcsymiv/web-hello-world/pkg/render"
+	"github.com/mcsymiv/web-hello-world/internal/config"
+	"github.com/mcsymiv/web-hello-world/internal/hand"
+	"github.com/mcsymiv/web-hello-world/internal/render"
 )
 
 const port = ":8080"

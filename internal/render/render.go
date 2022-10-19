@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 
 	"github.com/justinas/nosurf"
-	"github.com/mcsymiv/web-hello-world/pkg/config"
-	"github.com/mcsymiv/web-hello-world/pkg/models"
+	"github.com/mcsymiv/web-hello-world/internal/config"
+	"github.com/mcsymiv/web-hello-world/internal/models"
 )
 
 var app *config.AppConfig
