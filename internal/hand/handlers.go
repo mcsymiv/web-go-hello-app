@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/mcsymiv/web-hello-world/pkg/config"
-	"github.com/mcsymiv/web-hello-world/pkg/models"
-	"github.com/mcsymiv/web-hello-world/pkg/render"
+	"github.com/mcsymiv/web-hello-world/internal/config"
+	"github.com/mcsymiv/web-hello-world/internal/models"
+	"github.com/mcsymiv/web-hello-world/internal/render"
 )
 
 // Repo is the repository used by handlers
