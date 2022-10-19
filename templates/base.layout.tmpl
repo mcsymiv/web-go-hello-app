@@ -19,6 +19,11 @@
 		<!-- date picker cdn -->
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/css/datepicker-bs5.min.css">
 
+		<!-- google fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+
 		{{ block "css" . }}
 		{{ end }}
 
@@ -85,7 +90,7 @@
 					toast.addEventListener('mouseleave', Swal.resumeTimer);
 				}
 			});
-			
+
 			document.getElementById("toast").addEventListener("click", function() {
 				 Toast.fire({
 				  icon: 'success',

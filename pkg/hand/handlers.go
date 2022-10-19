@@ -1,6 +1,9 @@
 package hand
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -41,7 +44,9 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Posted to home route"))
+	var startDate string = r.FormValue("start")
+	var endDate string = r.FormValue("end")
+	w.Write([]byte(fmt.Sprintf("Posted to home route with data: %s, %s", startDate, endDate)))
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
@@ -60,4 +65,22 @@ func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {
 	os.Exit(0)
+}
+
+func (repo *Repository) HomeJson(w http.ResponseWriter, r *http.Request) {
+	homeJson := struct {
+		Ok      bool   `json:"ok"`
+		Message string `json:"msg"`
+	}{
+		Ok:      true,
+		Message: "Message from json",
+	}
+
+	res, err := json.MarshalIndent(homeJson, "", "\t")
+	if err != nil {
+		log.Println(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(res)
 }
