@@ -1,13 +1,12 @@
 package hand
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/mcsymiv/web-hello-world/internal/config"
+	"github.com/mcsymiv/web-hello-world/internal/forms"
 	"github.com/mcsymiv/web-hello-world/internal/models"
 	"github.com/mcsymiv/web-hello-world/internal/render"
 )
@@ -37,26 +36,43 @@ func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	var remoteIp string = r.RemoteAddr
-	repo.App.Session.Put(r.Context(), "remoteIp", remoteIp)
-
-	render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{})
+	render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
 }
 
 func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
-	var startDate string = r.FormValue("start")
-	var endDate string = r.FormValue("end")
-	w.Write([]byte(fmt.Sprintf("Posted to home route with data: %s, %s", startDate, endDate)))
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error on parse form from /home-post", err)
+		return
+	}
+
+	search := models.Search{
+		Query:     r.Form.Get("query"),
+		StartDate: r.Form.Get("start_date"),
+		EndDate:   r.Form.Get("end_date"),
+	}
+
+	form := forms.New(r.PostForm)
+
+	form.HasRequired("query", r)
+
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["search"] = search
+
+		render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{
+			Form: form,
+			Data: data,
+		})
+
+		return
+	}
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
-	stringMap := make(map[string]string)
-
-	stringMap["remoteIp"] = repo.App.Session.GetString(r.Context(), "remoteIp")
-
-	render.RenderTemplate(w, r, "about.page.tmpl", &models.TemplateData{
-		StringMap: stringMap,
-	})
+	render.RenderTemplate(w, r, "about.page.tmpl", &models.TemplateData{})
 }
 
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
@@ -65,22 +81,4 @@ func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {
 	os.Exit(0)
-}
-
-func (repo *Repository) HomeJson(w http.ResponseWriter, r *http.Request) {
-	homeJson := struct {
-		Ok      bool   `json:"ok"`
-		Message string `json:"msg"`
-	}{
-		Ok:      true,
-		Message: "Message from json",
-	}
-
-	res, err := json.MarshalIndent(homeJson, "", "\t")
-	if err != nil {
-		log.Println(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(res)
 }

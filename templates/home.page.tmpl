@@ -19,19 +19,27 @@
 				<form action="/home" method="post">
 					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
+
 						<div class="form-row mt-2">
 							<div class="col">
-								<input type="text" class="form-control"  placeholder="Search..." name="search">
+								<input type="text" class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" placeholder="Search.."  name="query">
+									{{ with .Form.Errors.Get "query" }}
+										<div class="text-danger small ms-2">
+									 		{{ . }}
+										</div>
+									{{ end }}
 							</div>
 						</div>
+
 						<div class="form-row input-group mt-2" id="DatePicker">
 							<div class="col">
-								<input type="text" placeholder="Start date" name="start" class="form-control">
+								<input  type="text" placeholder="Start date" name="start" class="form-control">
 							</div>
 							<div class="col ms-1">
-								<input type="text"placeholder="End date" name="end" class="form-control">
+								<input  type="text"placeholder="End date" name="end" class="form-control">
 							</div>
 						</div>
+
   					</div>
   					<button type="submit" class="btn btn-outline-primary">Search</button>
 				</form>
@@ -49,18 +57,6 @@
 						like Aldus PageMaker including versions of Lorem Ipsum.
 				</p>
 				<button id="toast" class="btn btn-outline-info">Click me</button>
-				
-				<form action="/home-json" method="get">
-					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
-  					<div class="mb-3">
-						<div class="form-row mt-2">
-							<div class="col">
-								<input type="text" class="form-control"  placeholder="Search..." name="search">
-							</div>
-						</div>
-  					</div>
-  					<button type="submit" class="btn btn-outline-primary">Search</button>
-				</form>
 			</div>
 			<div class="col-lg-1 col-md-1"></div>
 		</div>

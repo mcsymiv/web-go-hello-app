@@ -30,9 +30,6 @@ func routes(app *config.AppConfig) http.Handler {
 	// post
 	mux.Post("/home", hand.Repo.PostHome)
 
-	// ajax
-	mux.Get("/home-json", hand.Repo.HomeJson)
-
 	var fileServer http.Handler = http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
