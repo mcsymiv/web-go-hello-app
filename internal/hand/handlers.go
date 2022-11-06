@@ -36,8 +36,13 @@ func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	var emptySearch models.Search
+	data := make(map[string]interface{})
+	data["search"] = emptySearch
+
 	render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
+		Data: data,
 	})
 }
 
@@ -50,13 +55,13 @@ func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
 
 	search := models.Search{
 		Query:     r.Form.Get("query"),
-		StartDate: r.Form.Get("start_date"),
-		EndDate:   r.Form.Get("end_date"),
+		StartDate: r.Form.Get("start"),
+		EndDate:   r.Form.Get("end"),
 	}
 
 	form := forms.New(r.PostForm)
 
-	form.HasRequired("query", r)
+	form.Required("query", "start", "end")
 
 	if !form.Valid() {
 		data := make(map[string]interface{})

@@ -16,27 +16,61 @@
 	<div class="container">
 		<div class="row m-3">
 			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
+
+				{{ $search := index .Data "search" }}
+				
+				<!-- Search form by: query, start, end date -->
 				<form action="/home" method="post">
 					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
 
+						<!-- Search: query input -->
 						<div class="form-row mt-2">
 							<div class="col">
-								<input type="text" class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" placeholder="Search.."  name="query">
+								<input type="text" 
+									class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
+									placeholder="Search.."  
+									name="query"
+									value="{{ $search.Query }}">
+
 									{{ with .Form.Errors.Get "query" }}
 										<div class="text-danger small ms-2">
 									 		{{ . }}
 										</div>
 									{{ end }}
+
 							</div>
 						</div>
 
+						<!-- Search: start, end date inputs -->
 						<div class="form-row input-group mt-2" id="DatePicker">
 							<div class="col">
-								<input  type="text" placeholder="Start date" name="start" class="form-control">
+								<input  type="text" 
+									placeholder="Start date" 
+									name="start" 
+									class="form-control {{ with .Form.Errors.Get "start" }}is-invalid{{ end }}" 
+									value="{{ $search.StartDate }}">
+
+									{{ with .Form.Errors.Get "start" }}
+										<div class="text-danger small ms-2">
+									 		{{ . }}
+										</div>
+									{{ end }}
+
 							</div>
 							<div class="col ms-1">
-								<input  type="text"placeholder="End date" name="end" class="form-control">
+								<input  type="text"
+									placeholder="End date" 
+									name="end" 
+									class="form-control {{ with .Form.Errors.Get "end" }}is-invalid{{ end }}" 
+									value="{{ $search.EndDate }}">
+
+									{{ with .Form.Errors.Get "end" }}
+										<div class="text-danger small ms-2">
+									 		{{ . }}
+										</div>
+									{{ end }}
+
 							</div>
 						</div>
 
