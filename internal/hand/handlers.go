@@ -74,6 +74,24 @@ func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	repo.App.Session.Put(r.Context(), "search", search)
+	http.Redirect(w, r, "/result", http.StatusSeeOther)
+}
+
+func (repo *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
+	search, ok := repo.App.Session.Get(r.Context(), "search").(models.Search)
+	if !ok {
+		log.Println("Can not get 'Search' data from Session. Add redirect to home page")
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["search"] = search
+
+	render.RenderTemplate(w, r, "result.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
