@@ -20,6 +20,27 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+
+	err := run()
+	if err != nil {
+		log.Println("Could not start the app")
+		log.Fatal(err)
+	}
+
+	fmt.Println("Started app. Listen on port :8080")
+	srv := &http.Server{
+		Addr:    port,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run() error {
+
 	// session type declaration
 	gob.Register(models.Search{})
 
@@ -37,7 +58,8 @@ func main() {
 
 	tmplCache, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("Can not create template from cache")
+		log.Println("Can not create template from cache")
+		return nil
 	}
 
 	app.UseCache = false
@@ -48,14 +70,5 @@ func main() {
 
 	render.NewTemplates(&app)
 
-	fmt.Println("Started app.\nListen on port :8080")
-	srv := &http.Server{
-		Addr:    port,
-		Handler: routes(&app),
-	}
-
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
+	return nil
 }
