@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"github.com/mcsymiv/web-hello-world/internal/models"
 )
 
+var pathToTemplates string = "./templates"
 var app *config.AppConfig
 
 // sets the config for the template package
@@ -65,7 +67,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, tmplDat
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	tmplCache := map[string]*template.Template{}
 	// get all files with match *.page.tmpl from ./templates folder
-	pages, err := filepath.Glob("./templates/*.page.tmpl")
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates))
 	if err != nil {
 		return tmplCache, err
 	}
@@ -79,13 +81,13 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		}
 
 		// look into layouts in ./template folder
-		layoutFiles, err := filepath.Glob("./templates/*.layout.tmpl")
+		layoutFiles, err := filepath.Glob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
 		if err != nil {
 			return tmplCache, err
 		}
 
 		if len(layoutFiles) > 0 {
-			tmplSet, err = tmplSet.ParseGlob("./templates/*.layout.tmpl")
+			tmplSet, err = tmplSet.ParseGlob(fmt.Sprintf("%s/*.layout.tmpl", pathToTemplates))
 			if err != nil {
 				return tmplCache, err
 			}
