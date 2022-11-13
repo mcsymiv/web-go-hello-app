@@ -3,6 +3,7 @@ package hand
 import (
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -21,6 +22,11 @@ var tests = []struct {
 	{"home", "/", "GET", []postData{}, http.StatusOK},
 	{"about", "/about", "GET", []postData{}, http.StatusOK},
 	{"contact", "/contact", "GET", []postData{}, http.StatusOK},
+	{"post-home", "/home", "POST", []postData{
+		{key: "query", value: "search key"},
+		{key: "start", value: "2022-11-11"},
+		{key: "end", value: "2022-12-12"},
+	}, http.StatusOK},
 }
 
 func TestHandlers(t *testing.T) {
@@ -44,7 +50,20 @@ func TestHandlers(t *testing.T) {
 				t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
 			}
 		} else {
+			values := url.Values{}
+			for _, v := range test.params {
+				values.Add(v.key, v.value)
+			}
 
+			res, err := testServer.Client().PostForm(testServer.URL+test.url, values)
+			if err != nil {
+				t.Log(err)
+				t.Fatal(err)
+			}
+
+			if res.StatusCode != test.statusCode {
+				t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
+			}
 		}
 	}
 

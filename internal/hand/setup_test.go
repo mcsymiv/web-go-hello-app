@@ -58,7 +58,9 @@ func getRoutes() http.Handler {
 	// Gracefully absorb panics and prints the stack trace
 	mux.Use(middleware.Recoverer)
 	// CSRF
-	mux.Use(NoSurf)
+
+	// NoSurf not used for testing post requests '/home'
+	// mux.Use(NoSurf)
 	// Session
 	mux.Use(SessionLoad)
 
