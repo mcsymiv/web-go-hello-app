@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/mcsymiv/web-hello-world/internal/forms"
 	"github.com/mcsymiv/web-hello-world/internal/models"
 )
 
@@ -20,6 +21,37 @@ func TestAddDefaultTemplateData(t *testing.T) {
 	result := AddDefaultTemplateData(&td, r)
 	if result.Flash != "123" {
 		t.Errorf("failed 'AddDefaultTemplateData'. Flash value expected: '123', but was %s", result.Flash)
+	}
+}
+
+func TestRenderTemplate(t *testing.T) {
+	pathToTemplates = "./../../templates"
+	tc, err := CreateTemplateCache()
+	if err != nil {
+		t.Error(err)
+	}
+
+	app.TemplateCache = tc
+
+	r, err := getSession()
+	if err != nil {
+		t.Error(err)
+	}
+
+	var rw testRenderResponseWriter
+	var data map[string]interface{}
+
+	err = RenderTemplate(&rw, r, "home.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+		Data: data,
+	})
+	if err != nil {
+		t.Errorf("Error writing template to browser: %v", err)
+	}
+
+	err = RenderTemplate(&rw, r, "non-existing.page.tmpl", &models.TemplateData{})
+	if err == nil {
+		t.Errorf("Got non-existing template: %v", err)
 	}
 }
 
