@@ -1,12 +1,12 @@
 package hand
 
 import (
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/mcsymiv/web-hello-world/internal/config"
 	"github.com/mcsymiv/web-hello-world/internal/forms"
+	"github.com/mcsymiv/web-hello-world/internal/helpers"
 	"github.com/mcsymiv/web-hello-world/internal/models"
 	"github.com/mcsymiv/web-hello-world/internal/render"
 )
@@ -49,7 +49,7 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error on parse form from /home-post", err)
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -82,7 +82,7 @@ func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	search, ok := repo.App.Session.Get(r.Context(), "search").(models.Search)
 	if !ok {
-		log.Println("Can not get 'Search' data from Session.")
+		repo.App.ErrorLog.Println("Can not get 'Search' data from Session")
 		repo.App.Session.Put(r.Context(), "error", "Can not get 'Search result' data from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
