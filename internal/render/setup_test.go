@@ -2,6 +2,7 @@ package render
 
 import (
 	"encoding/gob"
+	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -21,6 +22,8 @@ func TestMain(m *testing.M) {
 	gob.Register(models.Search{})
 
 	testApp.InProduction = false
+	testApp.InfoLog = log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime)
+	testApp.ErrorLog = log.New(os.Stdout, "[ERROR]\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// Sesssion manager settings
 	session = scs.New()

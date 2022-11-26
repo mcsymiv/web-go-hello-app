@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/mcsymiv/web-hello-world/internal/config"
 	"github.com/mcsymiv/web-hello-world/internal/hand"
+	"github.com/mcsymiv/web-hello-world/internal/helpers"
 	"github.com/mcsymiv/web-hello-world/internal/models"
 	"github.com/mcsymiv/web-hello-world/internal/render"
 )
@@ -46,6 +48,9 @@ func run() error {
 
 	app.InProduction = false
 
+	app.InfoLog = log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime)
+	app.ErrorLog = log.New(os.Stdout, "[ERROR]\t", log.Ldate|log.Ltime|log.Lshortfile)
+
 	// Sesssion manager settings
 	session = scs.New()
 
@@ -69,6 +74,7 @@ func run() error {
 	hand.NewHandlers(repo)
 
 	render.NewTemplates(&app)
+	helpers.NewHelpers(&app)
 
 	return nil
 }
