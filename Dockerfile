@@ -1,11 +1,15 @@
-# syntax=docker/dockerfile:1
+FROM golang:1.19
 
-FROM golang:1.19-alpine
-WORKDIR /app/github.com/mcsymiv/web-hello-world
-COPY go.* .
+WORKDIR /app
+
+COPY go.mod go.sum ./
+
+RUN go mod download && go mod verify
+
 COPY . .
-RUN ls
-RUN go.mod download
-# RUN go build -o /web-hello-world
+
+RUN go build ./cmd/web/*.go
+
 EXPOSE 8080
-# CMD ["/web-hello-world"]
+
+CMD ["./main"]
