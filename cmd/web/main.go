@@ -10,6 +10,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/mcsymiv/web-hello-world/internal/config"
+	"github.com/mcsymiv/web-hello-world/internal/driver"
 	"github.com/mcsymiv/web-hello-world/internal/hand"
 	"github.com/mcsymiv/web-hello-world/internal/helpers"
 	"github.com/mcsymiv/web-hello-world/internal/models"
@@ -23,11 +24,13 @@ var session *scs.SessionManager
 
 func main() {
 
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Println("Could not start the app")
 		log.Fatal(err)
 	}
+
+	defer db.SQL.Close()
 
 	fmt.Println("Started app. Listen on port :8080")
 	srv := &http.Server{
@@ -41,7 +44,7 @@ func main() {
 	}
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 
 	// session type declaration
 	gob.Register(models.Search{})
@@ -61,20 +64,27 @@ func run() error {
 
 	app.Session = session
 
+	// connect to db
+	log.Println("Connecting to db")
+	db, err := driver.ConnectDB("host=localhost port=5432 user=postgres dbname=db password=password")
+	if err != nil {
+		log.Fatal("Cannot connect to db")
+	}
+
 	tmplCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Println("Can not create template from cache")
-		return nil
+		return nil, err
 	}
 
 	app.UseCache = false
 	app.TemplateCache = tmplCache
 
-	repo := hand.NewRepo(&app)
+	repo := hand.NewRepo(&app, db)
 	hand.NewHandlers(repo)
 
 	render.NewTemplates(&app)
 	helpers.NewHelpers(&app)
 
-	return nil
+	return db, nil
 }
