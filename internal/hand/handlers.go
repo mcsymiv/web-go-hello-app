@@ -5,10 +5,13 @@ import (
 	"os"
 
 	"github.com/mcsymiv/web-hello-world/internal/config"
+	"github.com/mcsymiv/web-hello-world/internal/driver"
 	"github.com/mcsymiv/web-hello-world/internal/forms"
 	"github.com/mcsymiv/web-hello-world/internal/helpers"
 	"github.com/mcsymiv/web-hello-world/internal/models"
 	"github.com/mcsymiv/web-hello-world/internal/render"
+	"github.com/mcsymiv/web-hello-world/internal/repository"
+	"github.com/mcsymiv/web-hello-world/internal/repository/dbrepo"
 )
 
 // Repo is the repository used by handlers
@@ -17,12 +20,14 @@ var Repo *Repository
 // Repository is the repository type
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // NewRepo creates new repository with App config
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(a, db.SQL),
 	}
 }
 
