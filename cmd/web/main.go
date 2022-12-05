@@ -48,6 +48,7 @@ func run() (*driver.DB, error) {
 
 	// session type declaration
 	gob.Register(models.Search{})
+	gob.Register(models.User{})
 
 	app.InProduction = false
 
