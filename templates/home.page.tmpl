@@ -20,7 +20,7 @@
 				{{ $search := index .Data "search" }}
 				
 				<!-- Search form by: query, start, end date -->
-				<form action="/home" method="post">
+				<form action="/search" method="post">
 					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
 
