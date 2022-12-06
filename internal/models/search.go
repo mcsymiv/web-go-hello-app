@@ -7,7 +7,5 @@ type Search struct {
 	Id        int
 	UserId    int
 	Query     string
-	StartDate string
-	EndDate   string
 	CreatedAt time.Time
 }

@@ -14,6 +14,8 @@ import (
 	"github.com/mcsymiv/web-hello-world/internal/repository/dbrepo"
 )
 
+var timeFormat string = "2006-01-01"
+
 // Repo is the repository used by handlers
 var Repo *Repository
 
@@ -42,6 +44,7 @@ func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	var emptySearch models.Search
+
 	data := make(map[string]interface{})
 	data["search"] = emptySearch
 
@@ -59,14 +62,12 @@ func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	search := models.Search{
-		Query:     r.Form.Get("query"),
-		StartDate: r.Form.Get("start"),
-		EndDate:   r.Form.Get("end"),
+		Query: r.Form.Get("query"),
 	}
 
 	form := forms.New(r.PostForm)
 
-	form.Required("query", "start", "end")
+	form.Required("query")
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
