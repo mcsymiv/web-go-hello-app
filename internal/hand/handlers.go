@@ -14,6 +14,8 @@ import (
 	"github.com/mcsymiv/web-hello-world/internal/repository/dbrepo"
 )
 
+var timeFormat string = "2006-01-01"
+
 // Repo is the repository used by handlers
 var Repo *Repository
 
@@ -42,6 +44,7 @@ func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
 
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	var emptySearch models.Search
+
 	data := make(map[string]interface{})
 	data["search"] = emptySearch
 
@@ -51,22 +54,26 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) PostSearch(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		helpers.ServerError(w, err)
 		return
 	}
 
+	userId := 1
+
+	repo.App.Session.Put(r.Context(), "user_id", userId)
+	repo.App.Session.Put(r.Context(), "query", r.Form.Get("query"))
+
 	search := models.Search{
-		Query:     r.Form.Get("query"),
-		StartDate: r.Form.Get("start"),
-		EndDate:   r.Form.Get("end"),
+		Query:  r.Form.Get("query"),
+		UserId: userId,
 	}
 
 	form := forms.New(r.PostForm)
 
-	form.Required("query", "start", "end")
+	form.Required("query")
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
@@ -80,21 +87,39 @@ func (repo *Repository) PostHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repo.App.Session.Put(r.Context(), "search", search)
+	err = repo.DB.InsertSearch(search)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
 	http.Redirect(w, r, "/result", http.StatusSeeOther)
 }
 
 func (repo *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
-	search, ok := repo.App.Session.Get(r.Context(), "search").(models.Search)
+	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
 	if !ok {
-		repo.App.ErrorLog.Println("Can not get 'Search' data from Session")
-		repo.App.Session.Put(r.Context(), "error", "Can not get 'Search result' data from Session")
+		repo.App.ErrorLog.Println("Can not get 'user_id' from session")
+		repo.App.Session.Put(r.Context(), "error", "Can not get 'user_id' from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
-	// remove 'search' from session
-	repo.App.Session.Remove(r.Context(), "search")
+	query, ok := repo.App.Session.Get(r.Context(), "query").(string)
+	if !ok {
+		repo.App.ErrorLog.Println("Can not get 'query' from session")
+		repo.App.Session.Put(r.Context(), "query_error", "Can not get 'query' from session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	// remove 'user_id' from session
+	repo.App.Session.Remove(r.Context(), "user_id")
+	repo.App.Session.Remove(r.Context(), "query")
+
+	search, err := repo.DB.GetUserSearch(query, userId)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
 
 	data := make(map[string]interface{})
 	data["search"] = search

@@ -20,7 +20,7 @@
 				{{ $search := index .Data "search" }}
 				
 				<!-- Search form by: query, start, end date -->
-				<form action="/home" method="post">
+				<form action="/search" method="post">
 					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
 
@@ -42,38 +42,6 @@
 							</div>
 						</div>
 
-						<!-- Search: start, end date inputs -->
-						<div class="form-row input-group mt-2" id="DatePicker">
-							<div class="col">
-								<input  type="text" 
-									placeholder="Start date" 
-									name="start" 
-									class="form-control {{ with .Form.Errors.Get "start" }}is-invalid{{ end }}" 
-									value="{{ $search.StartDate }}">
-
-									{{ with .Form.Errors.Get "start" }}
-										<div class="text-danger small ms-2">
-									 		{{ . }}
-										</div>
-									{{ end }}
-
-							</div>
-							<div class="col ms-1">
-								<input  type="text"
-									placeholder="End date" 
-									name="end" 
-									class="form-control {{ with .Form.Errors.Get "end" }}is-invalid{{ end }}" 
-									value="{{ $search.EndDate }}">
-
-									{{ with .Form.Errors.Get "end" }}
-										<div class="text-danger small ms-2">
-									 		{{ . }}
-										</div>
-									{{ end }}
-
-							</div>
-						</div>
-
   					</div>
   					<button type="submit" class="btn btn-outline-primary">Search</button>
 				</form>
@@ -85,36 +53,10 @@
 						Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
 						Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
 						when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
-						It has survived not only five centuries, but also the leap into electronic typesetting, 
-						remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset 
-						sheets containing Lorem Ipsum passages, and more recently with desktop publishing software 
-						like Aldus PageMaker including versions of Lorem Ipsum.
 				</p>
 				<button id="toast" class="btn btn-outline-info">Click me</button>
 			</div>
 			<div class="col-lg-1 col-md-1"></div>
 		</div>
 	</div>
-{{ end }}
-
-{{ define "js" }}
-	<script>
-		const elem = document.getElementById("DatePicker");
-			const datepicker = new DateRangePicker(elem, {
-				format: "yyyy-mm-dd",
-				todayBtn: true,
-				prevArrow: '<',
-				nextArrow: '>',
-				clearBtn: true,
-				autohide: true,
-				todayBtnMode: 1,
-			});
-
-			elem.addEventListener("click", () => {
-				let pickerFooterButtons = document.querySelectorAll(".datepicker-controls .button");
-				pickerFooterButtons.forEach(btn => {
-					btn.classList.add("btn");
-				});
-			});
-	</script>
 {{ end }}

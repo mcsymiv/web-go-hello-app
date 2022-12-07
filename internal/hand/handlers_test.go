@@ -24,8 +24,6 @@ var tests = []struct {
 	{"contact", "/contact", "GET", []postData{}, http.StatusOK},
 	{"post-home", "/home", "POST", []postData{
 		{key: "query", value: "search key"},
-		{key: "start", value: "2022-11-11"},
-		{key: "end", value: "2022-12-12"},
 	}, http.StatusOK},
 }
 
