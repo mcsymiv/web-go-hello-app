@@ -14,8 +14,6 @@ import (
 	"github.com/mcsymiv/web-hello-world/internal/repository/dbrepo"
 )
 
-var timeFormat string = "2006-01-01"
-
 // Repo is the repository used by handlers
 var Repo *Repository
 
