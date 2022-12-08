@@ -53,7 +53,7 @@ func getRoutes() http.Handler {
 	repo := NewRepo(&app)
 	NewHandlers(repo)
 
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	var mux *chi.Mux = chi.NewRouter()
 
@@ -76,7 +76,7 @@ func getRoutes() http.Handler {
 	mux.Get("/result", Repo.SearchResult)
 
 	// post
-	mux.Post("/home", Repo.PostHome)
+	mux.Post("/home", Repo.PostSearch)
 
 	var fileServer http.Handler = http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))

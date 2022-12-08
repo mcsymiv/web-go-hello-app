@@ -24,7 +24,7 @@ func TestAddDefaultTemplateData(t *testing.T) {
 	}
 }
 
-func TestRenderTemplate(t *testing.T) {
+func TestTemplate(t *testing.T) {
 	pathToTemplates = "./../../templates"
 	tc, err := CreateTemplateCache()
 	if err != nil {
@@ -41,7 +41,7 @@ func TestRenderTemplate(t *testing.T) {
 	var rw testRenderResponseWriter
 	var data map[string]interface{}
 
-	err = RenderTemplate(&rw, r, "home.page.tmpl", &models.TemplateData{
+	err = Template(&rw, r, "query.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
 		Data: data,
 	})
@@ -49,7 +49,7 @@ func TestRenderTemplate(t *testing.T) {
 		t.Errorf("Error writing template to browser: %v", err)
 	}
 
-	err = RenderTemplate(&rw, r, "non-existing.page.tmpl", &models.TemplateData{})
+	err = Template(&rw, r, "non-existing.page.tmpl", &models.TemplateData{})
 	if err == nil {
 		t.Errorf("Got non-existing template: %v", err)
 	}
@@ -69,8 +69,8 @@ func getSession() (*http.Request, error) {
 	return r, nil
 }
 
-func TestNewTemplates(t *testing.T) {
-	NewTemplates(app)
+func TestNewRenderer(t *testing.T) {
+	NewRenderer(app)
 }
 
 func TestCreateTemplateCache(t *testing.T) {

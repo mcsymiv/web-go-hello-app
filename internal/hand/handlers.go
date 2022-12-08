@@ -3,6 +3,7 @@ package hand
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/mcsymiv/web-hello-world/internal/config"
 	"github.com/mcsymiv/web-hello-world/internal/driver"
@@ -37,6 +38,8 @@ func NewHandlers(r *Repository) {
 }
 
 func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
+	var userId int = 1
+	repo.App.Session.Put(r.Context(), "user_id", userId)
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
@@ -46,44 +49,49 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["search"] = emptySearch
 
-	render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{
+	render.Template(w, r, "home.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
 		Data: data,
 	})
 }
 
-func (repo *Repository) PostSearch(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		helpers.ServerError(w, err)
 		return
 	}
 
-	userId := 1
-
-	repo.App.Session.Put(r.Context(), "user_id", userId)
 	repo.App.Session.Put(r.Context(), "query", r.Form.Get("query"))
 
+	userId := repo.App.Session.Get(r.Context(), "user_id").(int)
+
 	search := models.Search{
-		Query:  r.Form.Get("query"),
-		UserId: userId,
+		Query:       r.Form.Get("query"),
+		Link:        r.Form.Get("link"),
+		Description: r.Form.Get("desc"),
+		UserId:      userId,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
 	}
 
 	form := forms.New(r.PostForm)
 
-	form.Required("query")
+	form.Required("query", "desc")
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["search"] = search
 
-		render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{
+		render.Template(w, r, "home.page.tmpl", &models.TemplateData{
 			Form: form,
 			Data: data,
 		})
 
 		return
 	}
+
+	repo.App.InfoLog.Println("successfully get query form values", search)
 
 	err = repo.DB.InsertSearch(search)
 	if err != nil {
@@ -93,7 +101,7 @@ func (repo *Repository) PostSearch(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/result", http.StatusSeeOther)
 }
 
-func (repo *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
+func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
 	if !ok {
 		repo.App.ErrorLog.Println("Can not get 'user_id' from session")
@@ -111,10 +119,9 @@ func (repo *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// remove 'user_id' from session
-	repo.App.Session.Remove(r.Context(), "user_id")
 	repo.App.Session.Remove(r.Context(), "query")
 
-	search, err := repo.DB.GetUserSearch(query, userId)
+	search, err := repo.DB.GetUserSearchByUserIdAndFullTextQuery(userId, query)
 	if err != nil {
 		helpers.ServerError(w, err)
 	}
@@ -122,19 +129,21 @@ func (repo *Repository) SearchResult(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["search"] = search
 
-	render.RenderTemplate(w, r, "result.page.tmpl", &models.TemplateData{
+	render.Template(w, r, "result.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
 		Data: data,
 	})
 }
 
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "about.page.tmpl", &models.TemplateData{})
+	render.Template(w, r, "about.page.tmpl", &models.TemplateData{})
 }
 
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, r, "contact.page.tmpl", &models.TemplateData{})
+	render.Template(w, r, "contact.page.tmpl", &models.TemplateData{})
 }
 
 func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {
+	repo.App.Session.Remove(r.Context(), "user_id")
 	os.Exit(0)
 }

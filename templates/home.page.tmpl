@@ -9,6 +9,10 @@
 		p {
 			font-family: 'Montserrat', sans-serif;
 		}
+		.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: #ccc;
+            opacity: .7; /* Firefox */
+		}
 	</style>
 {{ end }}
 
@@ -19,8 +23,8 @@
 
 				{{ $search := index .Data "search" }}
 				
-				<!-- Search form by: query, start, end date -->
-				<form action="/search" method="post">
+				<!-- Search form by query -->
+				<form action="/query" method="get">
 					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
 
@@ -43,19 +47,68 @@
 						</div>
 
   					</div>
+
   					<button type="submit" class="btn btn-outline-primary">Search</button>
 				</form>
 			</div>
 
 			<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12 p-4">
-				<h1>Home page</h1>
+				<h1>Add search/query</h1>
 				<p>
-						Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-						Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-						when an unknown printer took a galley of type and scrambled it to make a type specimen book. 
+					<em>Search</em>: keyword or query phrase that describes or narrows the problem<br>
+					<em>Link</em>: source that confirmes or shows solution to the problem<br>
+					<em>Description</em>: short and consice answer from the source
 				</p>
-				<button id="toast" class="btn btn-outline-info">Click me</button>
+				<form action="/query" method="post">
+					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+  					<div class="mb-3">
+
+						<!-- Search: query input -->
+						<div class="form-row mt-2">
+							<div class="col">
+								<input type="text" 
+									class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
+									placeholder="Search.."  
+									name="query"
+									value="{{ $search.Query }}">
+
+									{{ with .Form.Errors.Get "query" }}
+										<div class="text-danger small ms-2">
+									 		{{ . }}
+										</div>
+									{{ end }}
+							</div>
+						</div>
+
+						<!-- Link: link to the source -->
+						<div class="form-row mt-2">
+								<div class="col">
+										<input type="text"
+											   class="form-control"
+											   placeholder="Link.."
+											   name="link"
+											   value="">
+								</div>
+						</div>
+
+						<!-- Description: short answer from the source -->
+						<div class="form-row mt-2">
+								<div class="col">
+										<input type="text"
+											   class="form-control"
+											   placeholder="Description.."
+											   name="desc"
+											   value="">
+								</div>
+						</div>
+						
+  					</div>
+
+  					<button type="submit" class="btn btn-outline-primary">Add search</button>
+
+				</form>
 			</div>
+
 			<div class="col-lg-1 col-md-1"></div>
 		</div>
 	</div>

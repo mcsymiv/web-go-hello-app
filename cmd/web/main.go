@@ -84,7 +84,7 @@ func run() (*driver.DB, error) {
 	repo := hand.NewRepo(&app, db)
 	hand.NewHandlers(repo)
 
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 	helpers.NewHelpers(&app)
 
 	return db, nil
