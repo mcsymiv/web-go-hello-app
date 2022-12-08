@@ -31,11 +31,44 @@ func (p *postgresDBRepo) GetUserSearchByUserIdAndFullTextQuery(userId int, s str
 		err = r.Scan(&m.Id, &m.Query, &m.Description, &m.Link, &m.CreatedAt, &m.UpdatedAt)
 		if err != nil {
 			log.Println("Unable to get search")
-			return models.Search{}, err
+			return m, err
 		}
 	}
 
 	return m, nil
+}
+
+func (p *postgresDBRepo) GetUserSearchesByUserIdAndPartialTextQuery(userId int, s string) ([]models.Search, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	i := `
+		select id, query, description, link, created_at, updated_at
+		from searches
+		where user_id = $1
+		and query like '%' || $2 || '%'
+	`
+
+	var ms = make([]models.Search, 0)
+
+	r, err := p.DB.QueryContext(ctx, i, userId, s)
+	if err != nil {
+		p.App.ErrorLog.Println("unable to get queries with text like for user", err)
+		return ms, err
+	}
+
+	for r.Next() {
+		var m models.Search
+		err = r.Scan(&m.Id, &m.Query, &m.Description, &m.Link, &m.CreatedAt, &m.UpdatedAt)
+		if err != nil {
+			log.Println("Unable to get search")
+			return ms, err
+		}
+
+		ms = append(ms, m)
+	}
+
+	return ms, nil
 }
 
 // InsertSearch inserts search entry to database

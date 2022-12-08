@@ -37,12 +37,14 @@ func NewHandlers(r *Repository) {
 	Repo = r
 }
 
+// Index renders home page and puts user id into session
 func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
 	var userId int = 1
 	repo.App.Session.Put(r.Context(), "user_id", userId)
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
+// Home renders home MyQ form
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	var emptySearch models.Search
 
@@ -55,6 +57,7 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// PostQuery inserts new query into database with validation fields
 func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -101,6 +104,7 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/result", http.StatusSeeOther)
 }
 
+// QueryResult renders query result page from session
 func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
 	if !ok {
@@ -114,35 +118,47 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		repo.App.ErrorLog.Println("Can not get 'query' from session")
 		repo.App.Session.Put(r.Context(), "query_error", "Can not get 'query' from session")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		return
+		// http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		// return
+		repo.App.InfoLog.Println("setting query from url")
+		query = r.URL.Query().Get("query")
 	}
 
-	// remove 'user_id' from session
-	repo.App.Session.Remove(r.Context(), "query")
-
-	search, err := repo.DB.GetUserSearchByUserIdAndFullTextQuery(userId, query)
+	search, err := repo.DB.GetUserSearchesByUserIdAndPartialTextQuery(userId, query)
 	if err != nil {
 		helpers.ServerError(w, err)
 	}
 
+	repo.App.InfoLog.Println("resutl from db", search)
+
 	data := make(map[string]interface{})
 	data["search"] = search
 
+	stringMap := make(map[string]string)
+	stringMap["sessionQuery"] = query
+
+	// remove 'query' from session
+	repo.App.Session.Remove(r.Context(), "query")
+
 	render.Template(w, r, "result.page.tmpl", &models.TemplateData{
-		Form: forms.New(nil),
-		Data: data,
+		Form:      forms.New(nil),
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 
+// About renders about app page
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "about.page.tmpl", &models.TemplateData{})
 }
 
+// Contact renders contact page
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "contact.page.tmpl", &models.TemplateData{})
 }
 
+// Exit kills app, removes user_id from session
+// Todo: remove after graceful shutdown implementation
 func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {
 	repo.App.Session.Remove(r.Context(), "user_id")
 	os.Exit(0)

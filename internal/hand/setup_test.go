@@ -68,15 +68,16 @@ func getRoutes() http.Handler {
 	mux.Use(SessionLoad)
 
 	// get
-	mux.Get("/", Repo.Index)
-	mux.Get("/home", Repo.Home)
-	mux.Get("/about", Repo.About)
-	mux.Get("/exit", Repo.Exit)
-	mux.Get("/contact", Repo.Contact)
-	mux.Get("/result", Repo.SearchResult)
+	mux.Get("/", hand.Repo.Index)
+	mux.Get("/home", hand.Repo.Home)
+	//	mux.Get("/query", hand.Repo.Query)
+	mux.Get("/about", hand.Repo.About)
+	mux.Get("/exit", hand.Repo.Exit) // kills app
+	mux.Get("/contact", hand.Repo.Contact)
+	mux.Get("/result", hand.Repo.QueryResult)
 
 	// post
-	mux.Post("/home", Repo.PostSearch)
+	mux.Post("/query", hand.Repo.PostQuery)
 
 	var fileServer http.Handler = http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))

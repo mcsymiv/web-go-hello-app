@@ -24,7 +24,7 @@
 				{{ $search := index .Data "search" }}
 				
 				<!-- Search form by query -->
-				<form action="/query" method="get">
+				<form action="/result" method="get">
 					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
 
