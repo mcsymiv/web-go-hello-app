@@ -132,7 +132,10 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 
 	search, err := repo.DB.GetUserSearchesByUserIdAndPartialTextQuery(userId, query)
 	if err != nil {
-		helpers.ServerError(w, err)
+		repo.App.InfoLog.Println("unable to get searches from DB")
+		repo.App.ErrorLog.Println("unable to get search for user from DB on partial text query", err)
+		http.Redirect(w, r, "/result", http.StatusTemporaryRedirect)
+		// helpers.ServerError(w, err)
 	}
 
 	data := make(map[string]interface{})

@@ -1,6 +1,7 @@
 package dbrepo
 
 import (
+	"errors"
 	"time"
 
 	"github.com/mcsymiv/web-hello-world/internal/models"
@@ -21,7 +22,13 @@ func (p *testDbRepo) GetUserSearchByUserIdAndFullTextQuery(userId int, s string)
 }
 
 func (p *testDbRepo) GetUserSearchesByUserIdAndPartialTextQuery(userId int, s string) ([]models.Search, error) {
-	var ms []models.Search = []models.Search{
+	var ms []models.Search
+
+	if userId == 5 {
+		return ms, errors.New("test error from db")
+	}
+
+	ms = []models.Search{
 		models.Search{
 			Id:          1,
 			UserId:      1,
