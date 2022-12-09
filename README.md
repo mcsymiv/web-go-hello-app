@@ -7,8 +7,8 @@ I always have a trouble to remember 'How do I cut word in vim?', 'What was that 
 Well, now i can add specific to my own 'search vocabulary' query and provide consice answer or short description with source link, without a SMM lifestories in the blog. And/or without Google understanding of my understanding of what I actually want to find.
 
 #### Stack: 
-	back-end: [chi](https://github.com/go-chi/chi), [scs](https://github.com/alexedwards/scs), [nosurf](https://github.com/justinas/nosurf), [pgx](https://github.com/jackc/pgx)
-	front-end: [http/tmpl](https://pkg.go.dev/html/template), [bootstrap](https://getbootstrap.com/), [sweatAlert2](https://sweetalert2.github.io/)
+back-end: [chi](https://github.com/go-chi/chi), [scs](https://github.com/alexedwards/scs), [nosurf](https://github.com/justinas/nosurf), [pgx](https://github.com/jackc/pgx)
+front-end: [http/tmpl](https://pkg.go.dev/html/template), [bootstrap](https://getbootstrap.com/), [sweatAlert2](https://sweetalert2.github.io/)
 	
 #### Start app:
 ##### Build app image:
