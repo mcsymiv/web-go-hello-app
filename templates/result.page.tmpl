@@ -81,7 +81,11 @@
 											<div class="card-body">
 												<p class="card-title">
 													{{ .Query }} 
-												<a href="{{ with .Link }} {{ . }} {{ end }}" class="card-link"><i class="bi bi-box-arrow-up-right"></i></a>
+													{{ with .Link }} 
+															<a href="{{ . }}" class="card-link">
+																	<i class="bi bi-box-arrow-up-right"></i>
+															</a>
+													{{ end }}
 												</p>
 												<h5 class="card-text">{{ with .Description }} {{ . }} {{ end }}</h5>
 											</div>
