@@ -1,6 +1,9 @@
-# web-go-hello-app
+# add-search-app (MyQ)
+## educational web-app inspired by Trevor Sawler [udemy course on Go](https://www.udemy.com/course/building-modern-web-applications-with-go/)
 
 ### App
+Stack: 
+	backend: go ([chi](https://github.com/go-chi/chi), [scs](https://github.com/alexedwards/scs), )
 #### Build app image:
 ```
 docker build --tag web_go_hello_app .
