@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 )
 
@@ -14,16 +13,15 @@ type postData struct {
 	value string
 }
 
-var tests = []struct {
+var testGetHandlers = []struct {
 	name       string
 	url        string
 	method     string
-	params     []postData
 	statusCode int
 }{
-	{"home", "/", "GET", []postData{}, http.StatusOK},
-	{"about", "/about", "GET", []postData{}, http.StatusOK},
-	{"contact", "/contact", "GET", []postData{}, http.StatusOK},
+	{"home", "/", "GET", http.StatusOK},
+	{"about", "/about", "GET", http.StatusOK},
+	{"contact", "/contact", "GET", http.StatusOK},
 }
 
 func TestHandlers(t *testing.T) {
@@ -35,32 +33,15 @@ func TestHandlers(t *testing.T) {
 	// closes server after test is done
 	defer testServer.Close()
 
-	for _, test := range tests {
-		if test.method == "GET" {
-			res, err := testServer.Client().Get(testServer.URL + test.url)
-			if err != nil {
-				t.Log(err)
-				t.Fatal(err)
-			}
+	for _, test := range testGetHandlers {
+		res, err := testServer.Client().Get(testServer.URL + test.url)
+		if err != nil {
+			t.Log(err)
+			t.Fatal(err)
+		}
 
-			if res.StatusCode != test.statusCode {
-				t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
-			}
-		} else {
-			values := url.Values{}
-			for _, v := range test.params {
-				values.Add(v.key, v.value)
-			}
-
-			res, err := testServer.Client().PostForm(testServer.URL+test.url, values)
-			if err != nil {
-				t.Log(err)
-				t.Fatal(err)
-			}
-
-			if res.StatusCode != test.statusCode {
-				t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
-			}
+		if res.StatusCode != test.statusCode {
+			t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
 		}
 	}
 }
