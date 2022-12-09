@@ -32,6 +32,14 @@ func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	}
 }
 
+// NewTestRepo creates new repository with App config
+func NewTestRepo(a *config.AppConfig) *Repository {
+	return &Repository{
+		App: a,
+		DB:  dbrepo.NewTestDBRepo(a),
+	}
+}
+
 // NewHandlers sets repository for handlers
 func NewHandlers(r *Repository) {
 	Repo = r
@@ -118,8 +126,6 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		repo.App.ErrorLog.Println("Can not get 'query' from session")
 		repo.App.Session.Put(r.Context(), "query_error", "Can not get 'query' from session")
-		// http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
-		// return
 		repo.App.InfoLog.Println("setting query from url")
 		query = r.URL.Query().Get("query")
 	}
@@ -128,8 +134,6 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		helpers.ServerError(w, err)
 	}
-
-	repo.App.InfoLog.Println("resutl from db", search)
 
 	data := make(map[string]interface{})
 	data["search"] = search

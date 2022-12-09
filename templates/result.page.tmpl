@@ -39,7 +39,7 @@
 													class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
 													placeholder="Search.."  
 													name="query"
-													value="{{ index .StringMap "sessionQuery" }}">
+													value="">
 
 													{{ with .Form.Errors.Get "query" }}
 														<div class="text-danger small ms-2">
