@@ -75,7 +75,13 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 
 	repo.App.Session.Put(r.Context(), "query", r.Form.Get("query"))
 
-	userId := repo.App.Session.Get(r.Context(), "user_id").(int)
+	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
+	if !ok {
+		repo.App.ErrorLog.Println("Can not get 'user_id' from session")
+		repo.App.Session.Put(r.Context(), "error", "Can not get 'user_id' from Session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
 
 	search := models.Search{
 		Query:       r.Form.Get("query"),
