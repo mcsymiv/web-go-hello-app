@@ -24,13 +24,18 @@ var session *scs.SessionManager
 
 func main() {
 
-	db, err := run()
+	var args []string = os.Args
+
+	db, err := run(args[1])
 	if err != nil {
-		log.Println("Could not start the app")
+		log.Println("could not start the app")
+		log.Println("possible solution: 'docker start postgres'")
 		log.Fatal(err)
 	}
 
-	defer db.SQL.Close()
+	if db != nil {
+		defer db.SQL.Close()
+	}
 
 	fmt.Println("Started app. Listen on port :8080")
 	srv := &http.Server{
@@ -44,7 +49,7 @@ func main() {
 	}
 }
 
-func run() (*driver.DB, error) {
+func run(env string) (*driver.DB, error) {
 
 	// session type declaration
 	gob.Register(models.Search{})
@@ -65,13 +70,6 @@ func run() (*driver.DB, error) {
 
 	app.Session = session
 
-	// connect to db
-	log.Println("Connecting to db")
-	db, err := driver.ConnectDB("host=localhost port=5432 user=postgres dbname=db password=password")
-	if err != nil {
-		log.Fatal("Cannot connect to db")
-	}
-
 	tmplCache, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Println("Can not create template from cache")
@@ -81,11 +79,26 @@ func run() (*driver.DB, error) {
 	app.UseCache = false
 	app.TemplateCache = tmplCache
 
-	repo := hand.NewRepo(&app, db)
-	hand.NewHandlers(repo)
-
 	render.NewRenderer(&app)
 	helpers.NewHelpers(&app)
 
+	var repo *hand.Repository
+	var db *driver.DB
+
+	if env == "dev" {
+		log.Println("local db")
+		repo = hand.NewTestRepo(&app)
+	} else {
+		// connect to postgres
+		log.Println("connecting to db")
+		db, err = driver.ConnectDB("host=localhost port=5432 user=postgres dbname=db password=password")
+		if err != nil {
+			log.Fatal("cannot connect to db")
+		}
+
+		repo = hand.NewRepo(&app, db)
+	}
+
+	hand.NewHandlers(repo)
 	return db, nil
 }

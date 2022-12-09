@@ -52,7 +52,7 @@ func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
-// Home renders home MyQ form
+// Home renders home MyQ page
 func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	var emptySearch models.Search
 
@@ -141,7 +141,6 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 		repo.App.InfoLog.Println("unable to get searches from DB")
 		repo.App.ErrorLog.Println("unable to get search for user from DB on partial text query", err)
 		http.Redirect(w, r, "/result", http.StatusTemporaryRedirect)
-		// helpers.ServerError(w, err)
 	}
 
 	data := make(map[string]interface{})
