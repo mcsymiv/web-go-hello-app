@@ -7,15 +7,30 @@
 {{ define "content" }}
 		<div class="container">
 				<div class="row">
-						<div class="col">
-								<h1>About page</h1>
-								<p>This value comes from session: 
-									{{ if ne (index .StringMap "remoteIp") "" }}
-											<p>Your remote address is: {{index .StringMap "remoteIp"}}</p>
-									{{ else }}
-											<p>I don't know your IP address. Visit <a href="/home">Home page</a></p>
-									{{ end }}
+
+						<div class="col-2"></div>
+
+						<div class="col-8">
+								<h1 class="mt-3">About MyQ</h1>
+
+								<p>
+									MyQ allows you to add and search specific queries that you forget. 
+									I always have a trouble to remember <em>'How do I cut word in vim?'</em>, 
+									<em>'What was that command for ARP cache?'</em> or <em>'What I've typed in Google that directed me to that link on SO?'</em>. 
+									Well, now i can add specific to my own <em>'search vocabulary'</em> query, 
+									and provide consice answer or short description with source link, without a SMM lifestories in the blog. 
+									And/or without Google understanding of my understanding of what I actually want to find.
+								</p>
+
+								<form action="/" method="get" class="mt-4">
+										<button type="submit" class="btn btn-outline-success">
+												Start MyQ
+										</button>
+								</form>
+
 						</div>
+
+						<div class="col-2"></div>
 				</div>
 		</div>
 {{ end }}
