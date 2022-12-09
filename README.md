@@ -13,10 +13,10 @@ front-end: [http/tmpl](https://pkg.go.dev/html/template), [bootstrap](https://ge
 #### Start app:
 ##### Build app image:
 ```
-docker build --tag web_go_hello_app .
+docker build --tag myq .
 ```
 ```
-docker run --name web_go_hello_app -p 8080:8080 web_go_hello_app
+docker run --name myq -p 8080:8080 myq
 ```
 
 ##### Postgres:
