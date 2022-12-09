@@ -13,6 +13,9 @@
             color: #ccc;
             opacity: .7; /* Firefox */
 		}
+		.small-text {
+				font-size: smaller;
+		}
 	</style>
 {{ end }}
 
@@ -53,12 +56,7 @@
 			</div>
 
 			<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12 p-4">
-				<h1>Add search/query</h1>
-				<p>
-					<em>Search</em>: keyword or query phrase that describes or narrows the problem<br>
-					<em>Link</em>: source that confirmes or shows solution to the problem<br>
-					<em>Description</em>: short and consice answer from the source
-				</p>
+				<h1 class="mb-3">Add search/query</h1>
 				<form action="/query" method="post">
 					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
@@ -67,11 +65,13 @@
 						<div class="form-row mt-2">
 							<div class="col">
 								<input type="text" 
-									class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
-									placeholder="Search.."  
-									name="query"
-									value="{{ $search.Query }}">
+									   class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
+									   placeholder="Search.."  
+									   name="query"
+									   value="{{ $search.Query }}">
 
+    							<div class="form-text text-muted ms-2 small-text">Keyword or query phrase that describes or narrows the problem.</div>
+								
 									{{ with .Form.Errors.Get "query" }}
 										<div class="text-danger small ms-2">
 									 		{{ . }}
@@ -88,6 +88,7 @@
 											   placeholder="Link.."
 											   name="link"
 											   value="">
+    							<div class="form-text text-muted ms-2 small-text">Source that confirmes or shows solution to the problem (optional).</div>
 								</div>
 						</div>
 
@@ -99,12 +100,13 @@
 											   placeholder="Description.."
 											   name="desc"
 											   value="">
+    							<div class="form-text text-muted ms-2 small-text">Short and consice answer from the source.</div>
 								</div>
 						</div>
 						
   					</div>
 
-  					<button type="submit" class="btn btn-outline-primary">Add search</button>
+  					<button type="submit" class="btn btn-outline-primary mt-1">Add search</button>
 
 				</form>
 			</div>
