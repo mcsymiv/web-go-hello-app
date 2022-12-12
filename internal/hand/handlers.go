@@ -96,7 +96,9 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
-		data["search"] = search
+
+		data["invalid_search"] = search.Query
+		data["invalid_desc"] = search.Description
 
 		render.Template(w, r, "home.page.tmpl", &models.TemplateData{
 			Form: form,
