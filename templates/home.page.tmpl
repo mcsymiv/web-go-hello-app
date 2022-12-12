@@ -65,14 +65,14 @@
 						<div class="form-row mt-2">
 							<div class="col">
 								<input type="text" 
-									   class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
+									   class="form-control {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
 									   placeholder="Search.."  
 									   name="query"
 									   value="{{ $search.Query }}">
 
-    							<div class="form-text text-muted ms-2 small-text">Keyword or query phrase that describes or narrows the problem.</div>
+										<div class="form-text text-muted ms-2 small-text">Keyword or query phrase that describes or narrows the problem.</div>
 								
-									{{ with .Form.Errors.Get "query" }}
+									{{ with .Form.Errors.Get "search_query" }}
 										<div class="text-danger small ms-2">
 									 		{{ . }}
 										</div>
@@ -88,7 +88,7 @@
 											   placeholder="Link.."
 											   name="link"
 											   value="">
-    							<div class="form-text text-muted ms-2 small-text">Source that confirmes or shows solution to the problem (optional).</div>
+										<div class="form-text text-muted ms-2 small-text">Source that confirmes or shows solution to the problem (optional).</div>
 								</div>
 						</div>
 
@@ -100,15 +100,16 @@
 											   placeholder="Description.."
 											   name="desc"
 											   value="">
-    							<div class="form-text text-muted ms-2 small-text">Short and consice answer from the source.</div>
+										<div class="form-text text-muted ms-2 small-text">Short and consice answer from the source.</div>
 								</div>
 						</div>
 						
   					</div>
 
-  					<button type="submit" class="btn btn-outline-primary mt-1">Add search</button>
+					<button type="submit" class="btn btn-outline-primary mt-1">Add search</button>
 
 				</form>
+
 			</div>
 
 			<div class="col-lg-1 col-md-1"></div>

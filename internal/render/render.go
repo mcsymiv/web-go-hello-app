@@ -70,6 +70,7 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, tmplData *mod
 
 func CreateTemplateCache() (map[string]*template.Template, error) {
 	tmplCache := map[string]*template.Template{}
+
 	// get all files with match *.page.tmpl from ./templates folder
 	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.tmpl", pathToTemplates))
 	if err != nil {

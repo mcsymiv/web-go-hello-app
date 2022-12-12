@@ -17,6 +17,7 @@ import (
 
 // Repo is the repository used by handlers
 var Repo *Repository
+var userId int = 1
 
 // Repository is the repository type
 type Repository struct {
@@ -47,7 +48,6 @@ func NewHandlers(r *Repository) {
 
 // Index renders home page and puts user id into session
 func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
-	var userId int = 1
 	repo.App.Session.Put(r.Context(), "user_id", userId)
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
@@ -73,18 +73,16 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repo.App.Session.Put(r.Context(), "query", r.Form.Get("query"))
-
 	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
 	if !ok {
-		repo.App.ErrorLog.Println("Can not get 'user_id' from session")
-		repo.App.Session.Put(r.Context(), "error", "Can not get 'user_id' from Session")
+		repo.App.ErrorLog.Println("can not get 'user_id' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'user_id' from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
 	search := models.Search{
-		Query:       r.Form.Get("query"),
+		Query:       r.Form.Get("search_query"),
 		Link:        r.Form.Get("link"),
 		Description: r.Form.Get("desc"),
 		UserId:      userId,
@@ -94,7 +92,7 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 
-	form.Required("query", "desc")
+	form.Required("search_query", "desc")
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
@@ -108,17 +106,17 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repo.App.InfoLog.Println("successfully get query form values", search)
-
 	err = repo.DB.InsertSearch(search)
 	if err != nil {
 		helpers.ServerError(w, err)
 	}
 
-	http.Redirect(w, r, "/result", http.StatusSeeOther)
+	repo.App.Session.Put(r.Context(), "new_query", &search)
+
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
-// QueryResult renders query result page from session
+// QueryResult renders query result page
 func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
 	if !ok {
@@ -128,13 +126,7 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query, ok := repo.App.Session.Get(r.Context(), "query").(string)
-	if !ok {
-		repo.App.ErrorLog.Println("Can not get 'query' from session")
-		repo.App.Session.Put(r.Context(), "query_error", "Can not get 'query' from session")
-		repo.App.InfoLog.Println("setting query from url")
-		query = r.URL.Query().Get("query")
-	}
+	query := r.URL.Query().Get("query")
 
 	search, err := repo.DB.GetUserSearchesByUserIdAndPartialTextQuery(userId, query)
 	if err != nil {
@@ -147,10 +139,7 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	data["search"] = search
 
 	stringMap := make(map[string]string)
-	stringMap["sessionQuery"] = query
-
-	// remove 'query' from session
-	repo.App.Session.Remove(r.Context(), "query")
+	stringMap["searchQuery"] = query
 
 	render.Template(w, r, "result.page.tmpl", &models.TemplateData{
 		Form:      forms.New(nil),
