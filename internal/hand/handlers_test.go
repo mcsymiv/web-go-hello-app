@@ -192,6 +192,30 @@ func TestRepository_NoUserId_InSession_PostQuery(t *testing.T) {
 	}
 }
 
+func TestRepository_InvalidFormValue_CustomError_PostQuery(t *testing.T) {
+	var u int = 1
+
+	// missing search_query
+	desc := "desc=description"
+
+	req, _ := http.NewRequest("POST", "/query", strings.NewReader(desc))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	session.Put(ctx, "user_id", u)
+
+	handler := http.HandlerFunc(Repo.PostQuery)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostQuery return invalid code status, expected %d, but got %d", http.StatusSeeOther, rr.Code)
+	}
+}
+
 func getCtx(r *http.Request) context.Context {
 	ctx, err := session.Load(r.Context(), r.Header.Get("X-Session"))
 	if err != nil {
