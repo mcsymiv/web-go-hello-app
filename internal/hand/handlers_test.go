@@ -1,9 +1,12 @@
 package hand
 
 import (
+	"context"
+	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -12,19 +15,15 @@ type postData struct {
 	value string
 }
 
-var tests = []struct {
+var testGetHandlers = []struct {
 	name       string
 	url        string
 	method     string
-	params     []postData
 	statusCode int
 }{
-	{"home", "/", "GET", []postData{}, http.StatusOK},
-	{"about", "/about", "GET", []postData{}, http.StatusOK},
-	{"contact", "/contact", "GET", []postData{}, http.StatusOK},
-	{"post-home", "/home", "POST", []postData{
-		{key: "query", value: "search key"},
-	}, http.StatusOK},
+	{"home", "/", "GET", http.StatusOK},
+	{"about", "/about", "GET", http.StatusOK},
+	{"contact", "/contact", "GET", http.StatusOK},
 }
 
 func TestHandlers(t *testing.T) {
@@ -36,33 +35,132 @@ func TestHandlers(t *testing.T) {
 	// closes server after test is done
 	defer testServer.Close()
 
-	for _, test := range tests {
-		if test.method == "GET" {
-			res, err := testServer.Client().Get(testServer.URL + test.url)
-			if err != nil {
-				t.Log(err)
-				t.Fatal(err)
-			}
+	for _, test := range testGetHandlers {
+		res, err := testServer.Client().Get(testServer.URL + test.url)
+		if err != nil {
+			t.Log(err)
+			t.Fatal(err)
+		}
 
-			if res.StatusCode != test.statusCode {
-				t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
-			}
-		} else {
-			values := url.Values{}
-			for _, v := range test.params {
-				values.Add(v.key, v.value)
-			}
-
-			res, err := testServer.Client().PostForm(testServer.URL+test.url, values)
-			if err != nil {
-				t.Log(err)
-				t.Fatal(err)
-			}
-
-			if res.StatusCode != test.statusCode {
-				t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
-			}
+		if res.StatusCode != test.statusCode {
+			t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
 		}
 	}
+}
 
+func TestRepository_Success_QueryResult(t *testing.T) {
+
+	// put in session 'user_id' and 'query'
+	var u int = 1
+	var q string = "test query"
+
+	req, _ := http.NewRequest("GET", "/result", nil)
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	rr := httptest.NewRecorder()
+
+	session.Put(ctx, "user_id", u)
+	session.Put(ctx, "query", q)
+
+	h := http.HandlerFunc(Repo.QueryResult)
+
+	h.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Errorf("failed get /result, expected status %d, but was: %d", http.StatusOK, rr.Code)
+	}
+}
+
+func TestRepository_Redirect_Without_UserId_And_Query_In_Session_QueryResult(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/result", nil)
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	rr := httptest.NewRecorder()
+
+	h := http.HandlerFunc(Repo.QueryResult)
+
+	h.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("failed get /result without 'user_id' and 'query' in session, expected status %d, but was: %d", http.StatusTemporaryRedirect, rr.Code)
+	}
+}
+
+func TestRepository_Success_WithoutQueryInSession_QueryResult(t *testing.T) {
+	var u int = 1
+
+	req, _ := http.NewRequest("GET", "/result", nil)
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	rr := httptest.NewRecorder()
+
+	session.Put(ctx, "user_id", u)
+
+	h := http.HandlerFunc(Repo.QueryResult)
+
+	h.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Errorf("failed get /result without 'user_id' and 'query' in session, expected status %d, but was: %d", http.StatusOK, rr.Code)
+	}
+}
+
+func TestRepository_Redirect_Error_From_DB(t *testing.T) {
+	// user_id must be equal to 5 to return error from test_repo on GetUserSearchesByUserIdAndPartialTextQuery DB query
+	var u int = 5
+
+	req, _ := http.NewRequest("GET", "/result", nil)
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	rr := httptest.NewRecorder()
+
+	session.Put(ctx, "user_id", u)
+
+	h := http.HandlerFunc(Repo.QueryResult)
+
+	h.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("failed get /result, expected status %d, but was: %d", http.StatusTemporaryRedirect, rr.Code)
+	}
+}
+
+func TestRepository_PostQuery(t *testing.T) {
+	// user_id must be equal to 5 to return error from test_repo on GetUserSearchesByUserIdAndPartialTextQuery DB query
+	var u int = 5
+
+	sq := "search_query=query"
+	desc := "desc=description"
+	rb := fmt.Sprintf("%s&%s", sq, desc)
+
+	req, _ := http.NewRequest("POST", "/query", strings.NewReader(rb))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	session.Put(ctx, "user_id", u)
+
+	handler := http.HandlerFunc(Repo.PostQuery)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostQuery return invalid code status, expected %d, but got %d", http.StatusSeeOther, rr.Code)
+	}
+
+}
+
+func getCtx(r *http.Request) context.Context {
+	ctx, err := session.Load(r.Context(), r.Header.Get("X-Session"))
+	if err != nil {
+		log.Println("unable to load session context from request", err)
+	}
+
+	return ctx
 }

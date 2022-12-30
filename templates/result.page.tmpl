@@ -39,7 +39,7 @@
 													class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
 													placeholder="Search.."  
 													name="query"
-													value="{{ index .StringMap "sessionQuery" }}">
+													value="">
 
 													{{ with .Form.Errors.Get "query" }}
 														<div class="text-danger small ms-2">
@@ -57,7 +57,7 @@
 
 								<!-- Search result hint -->
 								<h6 class="mt-3 ms-2">
-										Result for: <em>{{ index .StringMap "sessionQuery" }}</em>
+										Result for: <em>{{ index .StringMap "searchQueryt" }}</em>
 								</h6>
 						</div>
 
@@ -81,7 +81,11 @@
 											<div class="card-body">
 												<p class="card-title">
 													{{ .Query }} 
-												<a href="{{ with .Link }} {{ . }} {{ end }}" class="card-link"><i class="bi bi-box-arrow-up-right"></i></a>
+													{{ with .Link }} 
+															<a href="{{ . }}" class="card-link">
+																	<i class="bi bi-box-arrow-up-right"></i>
+															</a>
+													{{ end }}
 												</p>
 												<h5 class="card-text">{{ with .Description }} {{ . }} {{ end }}</h5>
 											</div>

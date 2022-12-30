@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"testing"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -23,8 +24,7 @@ var pathToTemplates string = "./../../templates"
 var app config.AppConfig
 var session *scs.SessionManager
 
-func getRoutes() http.Handler {
-
+func TestMain(m *testing.M) {
 	// session type declaration
 	gob.Register(models.Search{})
 
@@ -50,11 +50,15 @@ func getRoutes() http.Handler {
 	app.TemplateCache = tmplCache
 	app.UseCache = true
 
-	repo := NewRepo(&app)
+	repo := NewTestRepo(&app)
 	NewHandlers(repo)
 
 	render.NewRenderer(&app)
 
+	os.Exit(m.Run())
+}
+
+func getRoutes() http.Handler {
 	var mux *chi.Mux = chi.NewRouter()
 
 	// Middlewares
@@ -68,16 +72,16 @@ func getRoutes() http.Handler {
 	mux.Use(SessionLoad)
 
 	// get
-	mux.Get("/", hand.Repo.Index)
-	mux.Get("/home", hand.Repo.Home)
-	//	mux.Get("/query", hand.Repo.Query)
-	mux.Get("/about", hand.Repo.About)
-	mux.Get("/exit", hand.Repo.Exit) // kills app
-	mux.Get("/contact", hand.Repo.Contact)
-	mux.Get("/result", hand.Repo.QueryResult)
+	mux.Get("/", Repo.Index)
+	mux.Get("/home", Repo.Home)
+	//	mux.Get("/query", Repo.Query)
+	mux.Get("/about", Repo.About)
+	mux.Get("/exit", Repo.Exit) // kills app
+	mux.Get("/contact", Repo.Contact)
+	mux.Get("/result", Repo.QueryResult)
 
 	// post
-	mux.Post("/query", hand.Repo.PostQuery)
+	mux.Post("/query", Repo.PostQuery)
 
 	var fileServer http.Handler = http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))

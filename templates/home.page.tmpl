@@ -37,8 +37,7 @@
 								<input type="text" 
 									class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
 									placeholder="Search.."  
-									name="query"
-									value="{{ $search.Query }}">
+									name="query">
 
 									{{ with .Form.Errors.Get "query" }}
 										<div class="text-danger small ms-2">
@@ -65,18 +64,25 @@
 						<div class="form-row mt-2">
 							<div class="col">
 								<input type="text" 
-									   class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
+									   class="form-control {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
 									   placeholder="Search.."  
-									   name="query"
-									   value="{{ $search.Query }}">
+									   name="search_query"
+									   {{ $invalidSearch := index .Data "invalid_search" }}
+									   
+									   {{ with $invalidSearch }}
+											   value="{{ . }}"
+									   {{ end }}
+									   >
 
-    							<div class="form-text text-muted ms-2 small-text">Keyword or query phrase that describes or narrows the problem.</div>
+								<div class="form-text text-muted ms-2 small-text">Keyword or query phrase that describes or narrows the problem.</div>
 								
-									{{ with .Form.Errors.Get "query" }}
-										<div class="text-danger small ms-2">
-									 		{{ . }}
-										</div>
-									{{ end }}
+								{{ with .Form.Errors.Get "search_query" }}
+
+								<div class="text-danger small ms-2">
+									 {{ . }}
+								</div>
+
+								{{ end }}
 							</div>
 						</div>
 
@@ -88,7 +94,7 @@
 											   placeholder="Link.."
 											   name="link"
 											   value="">
-    							<div class="form-text text-muted ms-2 small-text">Source that confirmes or shows solution to the problem (optional).</div>
+										<div class="form-text text-muted ms-2 small-text">Source that confirmes or shows solution to the problem (optional).</div>
 								</div>
 						</div>
 
@@ -96,19 +102,34 @@
 						<div class="form-row mt-2">
 								<div class="col">
 										<input type="text"
-											   class="form-control"
+											   class="form-control {{ with .Form.Errors.Get "desc" }}is-invalid{{ end }}"
 											   placeholder="Description.."
 											   name="desc"
-											   value="">
-    							<div class="form-text text-muted ms-2 small-text">Short and consice answer from the source.</div>
+											   {{ $invalidDesc := index .Data "invalid_desc" }}
+											   
+											   {{ with $invalidDesc }}
+													   value="{{ . }}"
+											   {{ end }}
+											   >
+										
+										<div class="form-text text-muted ms-2 small-text">Short and consice answer from the source.</div>
+										
+										{{ with .Form.Errors.Get "desc" }}
+
+										<div class="text-danger small ms-2">
+											{{ . }}
+										</div>
+
+										{{ end }}
 								</div>
 						</div>
 						
   					</div>
 
-  					<button type="submit" class="btn btn-outline-primary mt-1">Add search</button>
+					<button type="submit" class="btn btn-outline-primary mt-1">Add search</button>
 
 				</form>
+
 			</div>
 
 			<div class="col-lg-1 col-md-1"></div>

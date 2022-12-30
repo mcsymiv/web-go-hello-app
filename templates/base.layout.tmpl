@@ -44,7 +44,6 @@
 				</button>
 				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 					<div class="navbar-nav">
-						<a class="nav-link active" aria-current="page" href="/home">Q</a>
 						<a class="nav-link" href="/about">About</a>
 						<a class="nav-link" href="/contact">Contact</a>
 					</div>
@@ -75,30 +74,6 @@
 		{{ block "js" . }} 
 	   	{{ end }}
 
-		<!-- custom js -->
-		<script>
-			const Toast = Swal.mixin({
-				toast: true,
-				position: 'top-end',
-				showConfirmButton: false,
-				timer: 2000,
-				timerProgressBar: true,
-				showClass: {
-					popup: 'swal2-toast-show',
-				},
-				didOpen: (toast) => {
-					toast.addEventListener('mouseenter', Swal.stopTimer);
-					toast.addEventListener('mouseleave', Swal.resumeTimer);
-				}
-			});
-
-			document.getElementById("toast").addEventListener("click", function() {
-				 Toast.fire({
-				  icon: 'success',
-				  title: 'Signed in successfully'
-				});
-			});
-		</script>
 	</body>
 </html>
 {{ end }}

@@ -19,33 +19,3 @@ Well, now i can add specific query as part of my own 'search vocabulary' and pro
 
 back-end: [chi](https://github.com/go-chi/chi), [scs](https://github.com/alexedwards/scs), [nosurf](https://github.com/justinas/nosurf), [pgx](https://github.com/jackc/pgx)
 front-end: [http/tmpl](https://pkg.go.dev/html/template), [bootstrap](https://getbootstrap.com/), [sweatAlert2](https://sweetalert2.github.io/)
-	
-#### Start app:
-##### Build app image:
-```
-docker build --tag myq .
-```
-```
-docker run --name myq -p 8080:8080 myq
-```
-
-##### Postgres:
-##### Start psql:
-```
-docker run --name postgres \
-	-v pgdata:/var/lib/postgresql/data
-	-p 5432:5432 \
-	-e POSTGRES_USER=postgres \
-	-e POSTGRES_PASSWORD=password \
-	-e POSTGRES_DB=db \
-	-d \
-	postgres
-```
-#### Enter postgres container:
-```
-docker exec -it postgres bash
-```
-#### Connect to psql:
-```
-psql -U postgres -h localhost -p 5432
-```
