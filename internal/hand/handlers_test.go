@@ -171,6 +171,27 @@ func TestRepository_ParseFormError_PostQuery(t *testing.T) {
 	}
 }
 
+func TestRepository_NoUserId_InSession_PostQuery(t *testing.T) {
+	sq := "search_query=query"
+	desc := "desc=description"
+	rb := fmt.Sprintf("%s&%s", sq, desc)
+
+	req, _ := http.NewRequest("POST", "/query", strings.NewReader(rb))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(Repo.PostQuery)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("PostQuery returns invalid code status on missing 'userId' in session, expected %d, but got %d", http.StatusTemporaryRedirect, rr.Code)
+	}
+}
+
 func getCtx(r *http.Request) context.Context {
 	ctx, err := session.Load(r.Context(), r.Header.Get("X-Session"))
 	if err != nil {
