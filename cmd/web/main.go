@@ -108,7 +108,7 @@ func run(env []string) (*driver.DB, error) {
 		}
 
 	} else {
-		log.Fatal("invalid arg. Valid 'dev' or no arguments")
+		log.Fatal("invalid arg. Valid 'dev', 'uat' or no arguments")
 	}
 
 	hand.NewHandlers(repo)
