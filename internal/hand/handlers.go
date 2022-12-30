@@ -101,6 +101,8 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 		data["invalid_search"] = search.Query
 		data["invalid_desc"] = search.Description
 
+		http.Error(w, "Invalid form data. Check 'search_query' or 'desc' are required", http.StatusSeeOther)
+
 		render.Template(w, r, "home.page.tmpl", &models.TemplateData{
 			Form: form,
 			Data: data,

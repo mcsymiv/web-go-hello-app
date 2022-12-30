@@ -130,8 +130,7 @@ func TestRepository_Redirect_Error_From_DB(t *testing.T) {
 }
 
 func TestRepository_PostQuery(t *testing.T) {
-	// user_id must be equal to 5 to return error from test_repo on GetUserSearchesByUserIdAndPartialTextQuery DB query
-	var u int = 5
+	var u int = 1
 
 	sq := "search_query=query"
 	desc := "desc=description"
@@ -152,6 +151,93 @@ func TestRepository_PostQuery(t *testing.T) {
 
 	if rr.Code != http.StatusSeeOther {
 		t.Errorf("PostQuery return invalid code status, expected %d, but got %d", http.StatusSeeOther, rr.Code)
+	}
+}
+
+func TestRepository_ParseFormError_PostQuery(t *testing.T) {
+	req, _ := http.NewRequest("POST", "/query", nil)
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(Repo.PostQuery)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("PostQuery without body returns invalid code status, expected %d, but got %d", http.StatusTemporaryRedirect, rr.Code)
+	}
+}
+
+func TestRepository_NoUserId_InSession_PostQuery(t *testing.T) {
+	sq := "search_query=query"
+	desc := "desc=description"
+	rb := fmt.Sprintf("%s&%s", sq, desc)
+
+	req, _ := http.NewRequest("POST", "/query", strings.NewReader(rb))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	handler := http.HandlerFunc(Repo.PostQuery)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("PostQuery returns invalid code status on missing 'userId' in session, expected %d, but got %d", http.StatusTemporaryRedirect, rr.Code)
+	}
+}
+
+func TestRepository_InvalidFormValue_CustomError_PostQuery(t *testing.T) {
+	var u int = 1
+
+	// missing search_query
+	desc := "desc=description"
+
+	req, _ := http.NewRequest("POST", "/query", strings.NewReader(desc))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	session.Put(ctx, "user_id", u)
+
+	handler := http.HandlerFunc(Repo.PostQuery)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostQuery return invalid code status, expected %d, but got %d", http.StatusSeeOther, rr.Code)
+	}
+}
+
+func TestRepository_InserSearchToDB_Error_PostQuery(t *testing.T) {
+	var u int = 1
+
+	sq := "search_query=invalid"
+	desc := "desc=description"
+	rb := fmt.Sprintf("%s&%s", sq, desc)
+
+	req, _ := http.NewRequest("POST", "/query", strings.NewReader(rb))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	session.Put(ctx, "user_id", u)
+
+	handler := http.HandlerFunc(Repo.PostQuery)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("PostQuery return invalid code status from DB on invalid 'search_query', expected %d, but got %d", http.StatusTemporaryRedirect, rr.Code)
 	}
 
 }

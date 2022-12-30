@@ -45,11 +45,11 @@ func (p *testDbRepo) GetUserSearchesByUserIdAndPartialTextQuery(userId int, s st
 
 	if userId == 5 {
 		return ms, errors.New("test error from db")
-	} else {
-		for _, m := range testSearchModels {
-			if strings.Contains(m.Query, s) {
-				ms = append(ms, m)
-			}
+	}
+
+	for _, m := range testSearchModels {
+		if strings.Contains(m.Query, s) {
+			ms = append(ms, m)
 		}
 	}
 
@@ -58,6 +58,10 @@ func (p *testDbRepo) GetUserSearchesByUserIdAndPartialTextQuery(userId int, s st
 
 // InsertSearch inserts search entry to database
 func (p *testDbRepo) InsertSearch(s models.Search) error {
+	if s.Query == "invalid" {
+		return errors.New("test error from db on insert invalid 'search_query'")
+	}
+
 	testSearchModels = append(testSearchModels, s)
 	return nil
 }
