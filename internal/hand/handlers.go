@@ -8,7 +8,6 @@ import (
 	"github.com/mcsymiv/web-hello-world/internal/config"
 	"github.com/mcsymiv/web-hello-world/internal/driver"
 	"github.com/mcsymiv/web-hello-world/internal/forms"
-	"github.com/mcsymiv/web-hello-world/internal/helpers"
 	"github.com/mcsymiv/web-hello-world/internal/models"
 	"github.com/mcsymiv/web-hello-world/internal/render"
 	"github.com/mcsymiv/web-hello-world/internal/repository"
@@ -69,7 +68,9 @@ func (repo *Repository) Home(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		helpers.ServerError(w, err)
+		repo.App.ErrorLog.Println("can't parse form")
+		repo.App.Session.Put(r.Context(), "error", "can't parse form")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -110,7 +111,10 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 
 	err = repo.DB.InsertSearch(search)
 	if err != nil {
-		helpers.ServerError(w, err)
+		repo.App.ErrorLog.Println("can't insert search to db")
+		repo.App.Session.Put(r.Context(), "error", "can't insert search to db")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
 	}
 
 	repo.App.Session.Put(r.Context(), "new_query", &search)
@@ -132,7 +136,7 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 
 	search, err := repo.DB.GetUserSearchesByUserIdAndPartialTextQuery(userId, query)
 	if err != nil {
-		repo.App.InfoLog.Println("unable to get searches from DB")
+		repo.App.ErrorLog.Println("unable to get searches from DB")
 		repo.App.ErrorLog.Println("unable to get search for user from DB on partial text query", err)
 		http.Redirect(w, r, "/result", http.StatusTemporaryRedirect)
 	}

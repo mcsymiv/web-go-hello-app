@@ -2,9 +2,11 @@ package hand
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -125,6 +127,33 @@ func TestRepository_Redirect_Error_From_DB(t *testing.T) {
 	if rr.Code != http.StatusTemporaryRedirect {
 		t.Errorf("failed get /result, expected status %d, but was: %d", http.StatusTemporaryRedirect, rr.Code)
 	}
+}
+
+func TestRepository_PostQuery(t *testing.T) {
+	// user_id must be equal to 5 to return error from test_repo on GetUserSearchesByUserIdAndPartialTextQuery DB query
+	var u int = 5
+
+	sq := "search_query=query"
+	desc := "desc=description"
+	rb := fmt.Sprintf("%s&%s", sq, desc)
+
+	req, _ := http.NewRequest("POST", "/query", strings.NewReader(rb))
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+
+	session.Put(ctx, "user_id", u)
+
+	handler := http.HandlerFunc(Repo.PostQuery)
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("PostQuery return invalid code status, expected %d, but got %d", http.StatusSeeOther, rr.Code)
+	}
+
 }
 
 func getCtx(r *http.Request) context.Context {
