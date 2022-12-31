@@ -28,10 +28,23 @@
 		{{ block "css" . }}
 		{{ end }}
 
+		<style>
+			.nav-wrap {
+					border-bottom-style:solid;
+					border-bottom-width:1px;
+					border-bottom-color:#eee;
+			}
+			.form-control {
+					border: 1px solid #eee;
+			}
+		</style>
 	</head>
 	<body>
-		<nav class="navbar navbar-expand-lg sticky-top ps-4 mb-2" style="background-color: #fff;">
-			<div class="container-fluid">
+		<div class="nav-wrap">
+
+		<nav class="navbar navbar-expand-lg sticky-top py-4 mx-5" style="background-color: #fff;">
+			<div class="container-fluid py-3">
+
 				<a class="navbar-brand" href="/">MyQ</a>
 				<button class="navbar-toggler" 
 						type="button" 
@@ -48,8 +61,12 @@
 						<a class="nav-link" href="/contact">Contact</a>
 					</div>
 				</div>
+				<form class="d-flex me-5">
+					<button class="btn btn-outline-primary" type="submit">Login</button>
+				</form>
 			</div>
 		</nav>
+		</div>
 
 		{{ block "content" . }}
 		{{ end }}
