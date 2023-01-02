@@ -156,6 +156,13 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Login renders login page
+func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "login.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
 // About renders about app page
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "about.page.tmpl", &models.TemplateData{})

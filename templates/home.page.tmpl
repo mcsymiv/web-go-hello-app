@@ -55,7 +55,7 @@
 			</div>
 
 			<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12 p-4">
-				<h1 class="mb-3">Add search/query</h1>
+				<h1 class="mb-3 ms-3">Add search/query</h1>
 				<form action="/query" method="post">
 					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
   					<div class="mb-3">
@@ -64,7 +64,7 @@
 						<div class="form-row mt-2">
 							<div class="col">
 								<input type="text" 
-									   class="form-control {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
+									   class="form-control underline-input {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
 									   placeholder="Search.."  
 									   name="search_query"
 									   {{ $invalidSearch := index .Data "invalid_search" }}
@@ -90,7 +90,7 @@
 						<div class="form-row mt-2">
 								<div class="col">
 										<input type="text"
-											   class="form-control"
+											   class="form-control underline-input"
 											   placeholder="Link.."
 											   name="link"
 											   value="">
@@ -102,7 +102,7 @@
 						<div class="form-row mt-2">
 								<div class="col">
 										<input type="text"
-											   class="form-control {{ with .Form.Errors.Get "desc" }}is-invalid{{ end }}"
+											   class="form-control underline-input {{ with .Form.Errors.Get "desc" }}is-invalid{{ end }}"
 											   placeholder="Description.."
 											   name="desc"
 											   {{ $invalidDesc := index .Data "invalid_desc" }}

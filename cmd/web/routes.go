@@ -28,6 +28,7 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/exit", hand.Repo.Exit) // kills app
 	mux.Get("/contact", hand.Repo.Contact)
 	mux.Get("/result", hand.Repo.QueryResult)
+	mux.Get("/user/login", hand.Repo.Login)
 
 	// post
 	mux.Post("/query", hand.Repo.PostQuery)
