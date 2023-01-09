@@ -88,3 +88,54 @@ func (p *postgresDBRepo) InsertSearch(s models.Search) error {
 
 	return nil
 }
+
+// GetUserById retrieves full user data from db by id
+func (p *postgresDBRepo) GetUserById(int userId) (models.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	i := `
+		select id, user_name, email, password, searches, created_at, update_at
+		from users
+		where id = $1
+		`
+	row := p.DB.QueryRowContext(ctx, i, userId)
+
+	var u models.User
+
+	err := row.Scan(
+		&u.Id,
+		&u.UserName,
+		&u.Email,
+		&u.Password,
+		&u.Searches,
+		&u.CreatedAt,
+		&u.UpdatedAt,
+	)
+
+	if err != nil {
+		log.Println("Unable to get user")
+		return u, err
+	}
+
+	return u, nil
+}
+
+// UpdateUser updates user info by id
+func (p *postgresDBRepo) UpdateUser(u models.User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	i := `
+		update users
+		set user_name = $1, email = $2, updated_at = $3
+		where id = $4
+		`
+	_, err := p.DB.ExecContext(ctx, i, u.UserName, u.Email, time.Now(), u.Id)
+	if err != nil {
+		log.Println("unable to update the user")
+		return err
+	}
+
+	return nil
+}
