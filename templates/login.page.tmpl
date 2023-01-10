@@ -30,48 +30,50 @@
 					<div class="col-lg-4 col-md-4 col-sm-8 col-xs-10">
 						<form action="/user/login" method="post">
 
-						  <div class="mb-3">
-							<label for="exampleInputEmail1" 
-									class="form-label">Email address
-							</label>
+								<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+
+								<div class="mb-3">
+									<label for="exampleInputEmail1" 
+											class="form-label">Email address
+									</label>
 							
-							<input type="email" 
-								   class="form-control {{ with .Form.Errors.Get "email" }}is-invalid{{ end}}" 
-								   id="exampleInputEmail1" 
-								   aria-describedby="emailHelp">
+									<input type="email" 
+										   class="form-control {{ with .Form.Errors.Get "email" }}is-invalid{{ end}}" 
+										   id="exampleInputEmail1" 
+										   aria-describedby="emailHelp">
 
-									{{ with .Form.Errors.Get "email" }}
-										<div class="text-danger small ms-2">
-									 		{{ . }}
-										</div>
-									{{ end }}
+											{{ with .Form.Errors.Get "email" }}
+												<div class="text-danger small ms-2">
+													{{ . }}
+												</div>
+											{{ end }}
 
-							<div id="emailHelp" 
-								class="form-text">We'll never share your email with anyone else.
-							</div>
-						  </div>
+									<div id="emailHelp" 
+										class="form-text">We'll never share your email with anyone else.
+									</div>
+								  </div>
 
-						  <div class="mb-3">
-							<label for="exampleInputPassword1" 
-									class="form-label">Password
-							</label>
+								  <div class="mb-3">
+									<label for="exampleInputPassword1" 
+											class="form-label">Password
+									</label>
 
-							<input type="password" 
-								   class="form-control {{ with .Form.Errors.Get "password" }}is-invalid{{ end }}" 
-								   id="exampleInputPassword1">
-						  </div>
+									<input type="password" 
+										   class="form-control {{ with .Form.Errors.Get "password" }}is-invalid{{ end }}" 
+										   id="exampleInputPassword1">
+								  </div>
 
-						  <div class="mb-3 form-check">
-							<input type="checkbox" 
-								class="form-check-input" 
-								id="exampleCheck1">
+								  <div class="mb-3 form-check">
+									<input type="checkbox" 
+										class="form-check-input" 
+										id="exampleCheck1">
 
-							<label class="form-check-label" 
-									for="exampleCheck1">Remember me
-							</label>
-						  </div>
+									<label class="form-check-label" 
+											for="exampleCheck1">Remember me
+									</label>
+								  </div>
 
-						  <button type="submit" class="btn btn-primary">Sign in</button>
+								  <button type="submit" class="btn btn-primary">Sign in</button>
 						</form>
 					</div>
 

@@ -1,6 +1,7 @@
 package hand
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -161,6 +162,11 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "login.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
 	})
+}
+
+// PostLogin
+func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
+	log.Println("hit post login")
 }
 
 // About renders about app page
