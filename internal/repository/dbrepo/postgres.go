@@ -2,10 +2,12 @@ package dbrepo
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
 	"github.com/mcsymiv/web-hello-world/internal/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func (p *postgresDBRepo) GetUserSearchByUserIdAndFullTextQuery(userId int, s string) (models.Search, error) {
@@ -90,7 +92,7 @@ func (p *postgresDBRepo) InsertSearch(s models.Search) error {
 }
 
 // GetUserById retrieves full user data from db by id
-func (p *postgresDBRepo) GetUserById(int userId) (models.User, error) {
+func (p *postgresDBRepo) GetUserById(userId int) (models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -138,4 +140,34 @@ func (p *postgresDBRepo) UpdateUser(u models.User) error {
 	}
 
 	return nil
+}
+
+// AuthenticateUser compares user emain and pasword hash
+func (p *postgresDBRepo) AuthenticateUser(email, password string) (int, string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var id int
+	var hash string
+
+	m := `
+		select id, password
+		from users
+		where email = $1
+		`
+	row := p.DB.QueryRowContext(ctx, m, email)
+	err := row.Scan(&id, &hash)
+	if err != nil {
+		log.Println("unable to get user id and hash")
+		return id, "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		return 0, "", errors.New("incorrect password")
+	} else if err != nil {
+		return 0, "", err
+	}
+
+	return id, hash, nil
 }

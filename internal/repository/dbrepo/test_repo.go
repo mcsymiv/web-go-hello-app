@@ -65,3 +65,23 @@ func (p *testDbRepo) InsertSearch(s models.Search) error {
 	testSearchModels = append(testSearchModels, s)
 	return nil
 }
+
+// GetUserById retrieves full user data from db by id
+func (p *testDbRepo) GetUserById(userId int) (models.User, error) {
+	var u models.User
+	return u, nil
+}
+
+// UpdateUser updates user info by id
+func (p *testDbRepo) UpdateUser(u models.User) error {
+	return nil
+}
+
+// AuthenticateUser compares user emain and pasword hash
+func (p *testDbRepo) AuthenticateUser(email, password string) (int, string, error) {
+
+	var id int
+	var hash string
+
+	return id, hash, nil
+}
