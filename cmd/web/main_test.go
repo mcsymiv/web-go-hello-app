@@ -3,7 +3,8 @@ package main
 import "testing"
 
 func TestRun(t *testing.T) {
-	_, err := run()
+	var a = []string{"dev"}
+	_, err := run(a)
 	if err != nil {
 		t.Error("Failed 'run()'")
 	}

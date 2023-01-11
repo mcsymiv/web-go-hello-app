@@ -166,7 +166,7 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 // PostLogin handles user login auth logic
 func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
 	// good practice to renew session token on login
-	_ := repo.App.Session.RenewToken(r.Context())
+	_ = repo.App.Session.RenewToken(r.Context())
 
 	err := r.ParseForm()
 	if err != nil {
