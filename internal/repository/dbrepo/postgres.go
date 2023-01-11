@@ -15,7 +15,7 @@ func (p *postgresDBRepo) GetUserSearchByUserIdAndFullTextQuery(userId int, s str
 	defer cancel()
 
 	i := `
-		select id, query, description, link, created_at, updated_at
+		select id, query, description, query_link, created_at, updated_at
 		from searches
 		where user_id = $1
 		and query = $2
@@ -45,7 +45,7 @@ func (p *postgresDBRepo) GetUserSearchesByUserIdAndPartialTextQuery(userId int, 
 	defer cancel()
 
 	i := `
-		select id, query, description, link, created_at, updated_at
+		select id, query, description, query_link, created_at, updated_at
 		from searches
 		where user_id = $1
 		and query like '%' || $2 || '%'
@@ -81,7 +81,7 @@ func (p *postgresDBRepo) InsertSearch(s models.Search) error {
 	i := `
 		insert into 
 		searches 
-		(query, user_id, link, description, created_at, updated_at)
+		(query, user_id, query_link, description, created_at, updated_at)
 		values 
 		($1, $2, $3, $4, $5, $6)
 	`
