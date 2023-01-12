@@ -76,7 +76,7 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		repo.App.ErrorLog.Println("can not get 'userId' from session")
 		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 		return
 	}
 
