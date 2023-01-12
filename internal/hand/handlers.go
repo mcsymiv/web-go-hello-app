@@ -175,10 +175,13 @@ func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 	form.Required("email", "password")
-	if form.Valid() {
+	if !form.Valid() {
 		repo.App.ErrorLog.Println("required fields are empty, check 'email' or 'password'")
-		// take user back to login page
+		render.Template(w, r, "login.page.tmpl", &models.TemplateData{
+			Form: form,
+		})
 
+		return
 	}
 
 	email := r.Form.Get("email")
