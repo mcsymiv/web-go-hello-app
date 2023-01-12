@@ -2,7 +2,6 @@ package hand
 
 import (
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/mcsymiv/web-hello-world/internal/config"
@@ -16,7 +15,7 @@ import (
 
 // Repo is the repository used by handlers
 var Repo *Repository
-var userId int = 1
+var userId int
 
 // Repository is the repository type
 type Repository struct {
@@ -47,7 +46,6 @@ func NewHandlers(r *Repository) {
 
 // Index renders home page and puts user id into session
 func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
-	repo.App.Session.Put(r.Context(), "user_id", userId)
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
@@ -74,10 +72,10 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
 	if !ok {
-		repo.App.ErrorLog.Println("can not get 'user_id' from session")
-		repo.App.Session.Put(r.Context(), "error", "can not get 'user_id' from Session")
+		repo.App.ErrorLog.Println("can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
@@ -126,10 +124,10 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 
 // QueryResult renders query result page
 func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
-	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
 	if !ok {
-		repo.App.ErrorLog.Println("Can not get 'user_id' from session")
-		repo.App.Session.Put(r.Context(), "error", "Can not get 'user_id' from Session")
+		repo.App.ErrorLog.Println("Can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "Can not get 'userId' from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
@@ -161,6 +159,14 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "login.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
 	})
+}
+
+// Logout, terminates user session, redirects to home page
+func (repo *Repository) Logout(w http.ResponseWriter, r *http.Request) {
+	_ = repo.App.Session.Destroy(r.Context())
+	_ = repo.App.Session.RenewToken(r.Context())
+
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 // PostLogin handles user login auth logic
@@ -210,11 +216,4 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 // Contact renders contact page
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "contact.page.tmpl", &models.TemplateData{})
-}
-
-// Exit kills app, removes user_id from session
-// Todo: remove after graceful shutdown implementation
-func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {
-	repo.App.Session.Remove(r.Context(), "user_id")
-	os.Exit(0)
 }

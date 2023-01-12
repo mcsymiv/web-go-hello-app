@@ -38,6 +38,7 @@
 									</label>
 							
 									<input type="email" 
+										   name="email"
 										   class="form-control {{ with .Form.Errors.Get "email" }}is-invalid{{ end}}" 
 										   id="exampleInputEmail1" 
 										   aria-describedby="emailHelp">
@@ -59,8 +60,15 @@
 									</label>
 
 									<input type="password" 
+										   name="password"
 										   class="form-control {{ with .Form.Errors.Get "password" }}is-invalid{{ end }}" 
 										   id="exampleInputPassword1">
+
+											{{ with .Form.Errors.Get "password" }}
+												<div class="text-danger small ms-2">
+													{{ . }}
+												</div>
+											{{ end }}
 								  </div>
 
 								  <div class="mb-3 form-check">
