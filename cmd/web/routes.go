@@ -19,6 +19,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(NoSurf)
 	// Session
 	mux.Use(SessionLoad)
+	// Is user Authenticated check
+	// mux.Use(Authenticated)
 
 	// get
 	mux.Get("/", hand.Repo.Index)
