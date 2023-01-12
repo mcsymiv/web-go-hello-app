@@ -102,10 +102,12 @@ func run(env []string) (*driver.DB, error) {
 
 	} else if env[1] == "uat" {
 		log.Println("connecting to local db")
-		db, err = driver.ConnectDB(fmt.Sprintf("host=localhost port=%s user=postgres dbname=testdb password=password", postgresPort))
+		db, err = driver.ConnectDB(fmt.Sprintf("host=localhost port=%s user=postgres dbname=db password=password", postgresPort))
 		if err != nil {
 			log.Fatal("cannot connect to postgres container")
 		}
+
+		repo = hand.NewRepo(&app, db)
 
 	} else {
 		log.Fatal("invalid arg. Valid 'dev', 'uat' or no arguments")

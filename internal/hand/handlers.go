@@ -163,6 +163,45 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// PostLogin handles user login auth logic
+func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
+	// good practice to renew session token on login
+	_ = repo.App.Session.RenewToken(r.Context())
+
+	err := r.ParseForm()
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to parse form", err)
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("email", "password")
+	if !form.Valid() {
+		repo.App.ErrorLog.Println("required fields are empty, check 'email' or 'password'")
+		render.Template(w, r, "login.page.tmpl", &models.TemplateData{
+			Form: form,
+		})
+
+		return
+	}
+
+	email := r.Form.Get("email")
+	pass := r.Form.Get("password")
+
+	id, _, err := repo.DB.AuthenticateUser(email, pass)
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to authenticate user", err)
+		repo.App.Session.Put(r.Context(), "error", "invalid login credentials")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+
+		return
+	}
+
+	repo.App.InfoLog.Println("successfully authenticated")
+	repo.App.Session.Put(r.Context(), "userId", id)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+
+}
+
 // About renders about app page
 func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "about.page.tmpl", &models.TemplateData{})
