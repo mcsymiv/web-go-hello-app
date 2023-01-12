@@ -217,3 +217,8 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "contact.page.tmpl", &models.TemplateData{})
 }
+
+// Dashboard renders all user queries to manage
+func (repo *Repository) Dashboard(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "myq-dashboard.page.tmpl", &models.TemplateData{})
+}

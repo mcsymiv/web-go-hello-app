@@ -27,5 +27,5 @@ func ServerError(w http.ResponseWriter, err error) {
 
 // IsAuthenticated checks if user is logged in
 func IsAuthenticated(r *http.Request) bool {
-	return app.Session.Exists(r.Context(), "user_id")
+	return app.Session.Exists(r.Context(), "userId")
 }
