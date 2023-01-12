@@ -2,7 +2,6 @@ package hand
 
 import (
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/mcsymiv/web-hello-world/internal/config"
@@ -162,6 +161,14 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Logout, terminates user session, redirects to home page
+func (repo *Repository) Logout(w http.ResponseWriter, r *http.Request) {
+	_ = repo.App.Session.Destroy(r.Context())
+	_ = repo.App.Session.RenewToken(r.Context())
+
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+}
+
 // PostLogin handles user login auth logic
 func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
 	// good practice to renew session token on login
@@ -209,11 +216,4 @@ func (repo *Repository) About(w http.ResponseWriter, r *http.Request) {
 // Contact renders contact page
 func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "contact.page.tmpl", &models.TemplateData{})
-}
-
-// Exit kills app, removes userId from session
-// Todo: remove after graceful shutdown implementation
-func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {
-	repo.App.Session.Remove(r.Context(), "userId")
-	os.Exit(0)
 }
