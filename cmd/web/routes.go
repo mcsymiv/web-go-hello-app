@@ -39,5 +39,11 @@ func routes(app *config.AppConfig) http.Handler {
 	var fileServer http.Handler = http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
+	mux.Route("/myq", func(mux chi.Router) {
+		mux.Use(Authenticated)
+
+		mux.Get("/dashboard", hand.Repo.Dashboard)
+	})
+
 	return mux
 }
