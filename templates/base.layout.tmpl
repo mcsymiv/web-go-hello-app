@@ -64,9 +64,15 @@
 						<a class="nav-link" href="/contact">Contact</a>
 					</div>
 				</div>
-				<a id="login-btn" class="login-btn d-flex me-5" href="/user/login">
-					<button class="btn btn-outline-primary" type="submit">Login</button>
-				</a>
+				{{ if eq .IsAuth 1 }}
+						<a id="logout-btn" class="logout-btn d-flex me-5" href="/user/logout">
+							<button class="btn btn-outline-secondary" type="submit">Logout</button>
+						</a>
+				{{ else }}
+						<a id="login-btn" class="login-btn d-flex me-5" href="/user/login">
+							<button class="btn btn-outline-primary" type="submit">Login</button>
+						</a>
+				{{ end }}
 			</div>
 		</nav>
 		</div>

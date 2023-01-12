@@ -16,7 +16,7 @@ import (
 
 // Repo is the repository used by handlers
 var Repo *Repository
-var userId int = 1
+var userId int
 
 // Repository is the repository type
 type Repository struct {
@@ -47,7 +47,6 @@ func NewHandlers(r *Repository) {
 
 // Index renders home page and puts user id into session
 func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
-	repo.App.Session.Put(r.Context(), "user_id", userId)
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
@@ -74,10 +73,10 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
 	if !ok {
-		repo.App.ErrorLog.Println("can not get 'user_id' from session")
-		repo.App.Session.Put(r.Context(), "error", "can not get 'user_id' from Session")
+		repo.App.ErrorLog.Println("can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
@@ -126,10 +125,10 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 
 // QueryResult renders query result page
 func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
-	userId, ok := repo.App.Session.Get(r.Context(), "user_id").(int)
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
 	if !ok {
-		repo.App.ErrorLog.Println("Can not get 'user_id' from session")
-		repo.App.Session.Put(r.Context(), "error", "Can not get 'user_id' from Session")
+		repo.App.ErrorLog.Println("Can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "Can not get 'userId' from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
@@ -212,9 +211,9 @@ func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "contact.page.tmpl", &models.TemplateData{})
 }
 
-// Exit kills app, removes user_id from session
+// Exit kills app, removes userId from session
 // Todo: remove after graceful shutdown implementation
 func (repo *Repository) Exit(w http.ResponseWriter, r *http.Request) {
-	repo.App.Session.Remove(r.Context(), "user_id")
+	repo.App.Session.Remove(r.Context(), "userId")
 	os.Exit(0)
 }
