@@ -34,14 +34,17 @@
 					border-bottom-width:1px;
 					border-bottom-color:#eee;
 			}
+
 			.form-control {
 					border: 1px solid #eee;
 			}
-			.login-btn, .logout-btn {
+
+			.login-btn, .logout-btn, .dashboard-btn {
 					text-decoration:none;
 			}
 		</style>
 	</head>
+
 	<body>
 		<div class="nav-wrap">
 
@@ -64,7 +67,11 @@
 						<a class="nav-link" href="/contact">Contact</a>
 					</div>
 				</div>
+
 				{{ if eq .IsAuth 1 }}
+						<a id="dashboard-btn" class="dashboard-btn d-flex me-3" href="/myq/dashboard">
+							<button class="btn btn-warning" type="submit">Dashboard</button>
+						</a>
 						<a id="logout-btn" class="logout-btn d-flex me-5" href="/user/logout">
 							<button class="btn btn-outline-secondary" type="submit">Logout</button>
 						</a>

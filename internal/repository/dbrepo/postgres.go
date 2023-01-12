@@ -97,7 +97,7 @@ func (p *postgresDBRepo) GetUserById(userId int) (models.User, error) {
 	defer cancel()
 
 	i := `
-		select id, user_name, email, password, searches, created_at, update_at
+		select id, user_name, email, access_level, searches, created_at, update_at
 		from users
 		where id = $1
 		`
@@ -109,7 +109,7 @@ func (p *postgresDBRepo) GetUserById(userId int) (models.User, error) {
 		&u.Id,
 		&u.UserName,
 		&u.Email,
-		&u.Password,
+		&u.AccessLevel,
 		&u.Searches,
 		&u.CreatedAt,
 		&u.UpdatedAt,
