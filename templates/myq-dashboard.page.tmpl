@@ -1,1 +1,41 @@
-This page is for logged in users only.
+{{ template "dash" . }}
+
+{{ define "title" }}
+		<title>MyQ Dashboard</title>
+{{ end }}
+
+{{ define "css" }}
+	<style>
+		p {
+			font-family: 'Montserrat', sans-serif;
+		}
+		
+		.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: #ccc;
+            opacity: .7; /* Firefox */
+		}
+
+		.small-text {
+				font-size: smaller;
+		}
+	</style>
+{{ end }}
+
+{{ define "content" }}
+	<div class="container">
+		<div class="row m-3">
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
+				<p>Left column</p>
+			</div>
+
+			<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 p-4">
+				<p>Center column</p>
+			</div>
+
+			<div class="col-lg-2 col-md-2 p-4">
+					<p>Right column</p>
+			</div>
+
+		</div>
+	</div>
+{{ end }}
