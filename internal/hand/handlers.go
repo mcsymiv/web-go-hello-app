@@ -135,6 +135,19 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 
 	query := r.URL.Query().Get("query")
 
+	form := forms.New(r.Form)
+	form.Required("query")
+
+	if !form.Valid() {
+		repo.App.ErrorLog.Println("invalid form values, check if 'query' is empty")
+		repo.App.Session.Put(r.Context(), "error", "invalid form value")
+
+		render.Template(w, r, "home.page.tmpl", &models.TemplateData{
+			Form: form,
+		})
+
+		return
+	}
 	search, err := repo.DB.GetUserSearchesByUserIdAndPartialTextQuery(userId, query)
 	if err != nil {
 		repo.App.ErrorLog.Println("unable to get searches from DB")
@@ -182,6 +195,7 @@ func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 	form.Required("email", "password")
+
 	if !form.Valid() {
 		repo.App.ErrorLog.Println("required fields are empty, check 'email' or 'password'")
 		render.Template(w, r, "login.page.tmpl", &models.TemplateData{
