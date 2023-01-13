@@ -18,24 +18,53 @@
 		.small-text {
 				font-size: smaller;
 		}
+
+		.dash-wrap {
+				background-color: #333;
+				color: #fff;
+		}
 	</style>
 {{ end }}
 
 {{ define "content" }}
-	<div class="container">
-		<div class="row m-3">
-			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
-				<p>Left column</p>
-			</div>
+		<div class="dash-wrap">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
 
-			<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 p-4">
-				<p>Center column</p>
-			</div>
+							<div class="card text-bg-primary mb-3" style="max-width: 18rem;">
+									<div class="card-header">Header</div>
+									<div class="card-body">
+											<h5 class="card-title">Primary card title</h5>
+									</div>
+							</div>
 
-			<div class="col-lg-2 col-md-2 p-4">
-					<p>Right column</p>
-			</div>
+							<div class="card text-bg-secondary mb-3" style="max-width: 18rem;">
+									<div class="card-header">Header</div>
+									<div class="card-body">
+											<h5 class="card-title">Secondary card title</h5>
+									</div>
+							</div>
 
+							<div class="card text-bg-secondary mb-3" style="max-width: 18rem;">
+									<div class="card-header">Header</div>
+									<div class="card-body">
+											<h5 class="card-title">Secondary card title</h5>
+									</div>
+							</div>
+
+
+					</div>
+
+					<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 p-4">
+						<p>Center column</p>
+					</div>
+
+					<div class="col-lg-2 col-md-2 p-4">
+							<p>Right column</p>
+					</div>
+
+				</div>
+			</div>
 		</div>
-	</div>
 {{ end }}
