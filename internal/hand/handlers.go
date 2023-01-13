@@ -223,3 +223,8 @@ func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) Dashboard(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "myq-dashboard.page.tmpl", &models.TemplateData{})
 }
+
+// MyqSearches renders searches
+func (repo *Repository) MyqSearches(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "myq-searches.page.tmpl", &models.TemplateData{})
+}
