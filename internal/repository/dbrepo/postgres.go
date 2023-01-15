@@ -171,3 +171,23 @@ func (p *postgresDBRepo) AuthenticateUser(email, password string) (int, string, 
 
 	return id, hash, nil
 }
+
+func (p *postgresDBRepo) GetUsersCount() (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var uc int
+
+	q := `
+		select count(*) as users_count from users	
+	`
+	row := p.DB.QueryRowContext(ctx, q)
+	err := row.Scan(&uc)
+	if err != nil {
+		log.Println("unable to get users count from DB")
+		return uc, err
+	}
+
+	return uc, nil
+
+}

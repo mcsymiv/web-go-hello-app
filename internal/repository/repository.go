@@ -9,4 +9,7 @@ type DatabaseRepo interface {
 	GetUserById(userId int) (models.User, error)
 	UpdateUser(u models.User) error
 	AuthenticateUser(email, password string) (int, string, error)
+
+	//dashboard
+	GetUsersCount() (int, error)
 }

@@ -85,3 +85,8 @@ func (p *testDbRepo) AuthenticateUser(email, password string) (int, string, erro
 
 	return id, hash, nil
 }
+
+// GetUsersCount returns users count
+func (p *testDbRepo) GetUsersCount() (int, error) {
+	return 5, nil
+}
