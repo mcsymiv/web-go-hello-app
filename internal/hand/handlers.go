@@ -130,10 +130,12 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 		repo.App.ErrorLog.Println("Can not get 'userId' from session")
 		repo.App.Session.Put(r.Context(), "error", "Can not get 'userId' from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+
 		return
 	}
 
 	query := r.URL.Query().Get("query")
+
 	form := forms.New(r.URL.Query())
 	form.Required("query")
 
@@ -147,11 +149,14 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
 	search, err := repo.DB.GetUserSearchesByUserIdAndPartialTextQuery(userId, query)
 	if err != nil {
 		repo.App.ErrorLog.Println("unable to get searches from DB")
 		repo.App.ErrorLog.Println("unable to get search for user from DB on partial text query", err)
 		http.Redirect(w, r, "/result", http.StatusTemporaryRedirect)
+
+		return
 	}
 
 	data := make(map[string]interface{})
