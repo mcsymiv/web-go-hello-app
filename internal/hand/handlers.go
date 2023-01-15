@@ -246,3 +246,21 @@ func (repo *Repository) Dashboard(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) MyqSearches(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "myq-searches.page.tmpl", &models.TemplateData{})
 }
+
+// MyqUsers shows total users count
+func (repo *Repository) MyqUsers(w http.ResponseWriter, r *http.Request) {
+	user_count, err := repo.DB.GetUsersCount()
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to get user count from DB", err)
+		http.Redirect(w, r, "/myq/dashboard", http.StatusTemporaryRedirect)
+
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["users"] = user_count
+
+	render.Template(w, r, "myq-users.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
+}
