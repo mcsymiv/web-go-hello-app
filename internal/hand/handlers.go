@@ -134,8 +134,7 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := r.URL.Query().Get("query")
-
-	form := forms.New(r.Form)
+	form := forms.New(r.URL.Query())
 	form.Required("query")
 
 	if !form.Valid() {
