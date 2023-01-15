@@ -52,6 +52,28 @@
 			.login-btn, .logout-btn, .dashboard-btn {
 					text-decoration:none;
 			}
+
+		p {
+			font-family: 'Montserrat', sans-serif;
+		}
+		
+		.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: #ccc;
+            opacity: .7; /* Firefox */
+		}
+
+		.small-text {
+				font-size: smaller;
+		}
+
+		.dash-wrap {
+				background-color: #333;
+				color: #fff;
+		}
+
+		.list-group-item-action:hover {
+				background-color: #ccc;
+		}
 		</style>
 	</head>
 
@@ -74,13 +96,6 @@
 						aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
-				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-					<div class="navbar-nav">
-						<a class="nav-link" href="/myq/users">Users</a>
-						<a class="nav-link" href="/myq/searches">Searches</a>
-						<a class="nav-link" href="/myq/usages">Usages</a>
-					</div>
-				</div>
 
 				{{ if eq .IsAuth 1 }}
 						<a id="logout-btn" class="logout-btn d-flex me-5" href="/user/logout">
@@ -95,8 +110,25 @@
 		</nav>
 		</div>
 
-		{{ block "content" . }}
-		{{ end }}
+		<div class="dash-wrap">
+			<div class="container">
+					<div class="row">
+
+							<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
+									<div id="list-example" class="list-group">
+											<a class="list-group-item list-group-item-action" href="/myq/users">Users</a>
+											<a class="list-group-item list-group-item-action" href="/myq/searches">Searches</a>
+									</div>
+							</div>
+
+							{{ block "content" . }}
+							{{ end }}
+
+							<div class="col-lg-2 col-md-2 p-4">
+							</div>
+					</div>
+			</div>
+		</div>
 
 		<footer>
 		</footer>

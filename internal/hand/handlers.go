@@ -246,3 +246,13 @@ func (repo *Repository) Dashboard(w http.ResponseWriter, r *http.Request) {
 func (repo *Repository) MyqSearches(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "myq-searches.page.tmpl", &models.TemplateData{})
 }
+
+// MyqUsers shows total users count
+func (repo *Repository) MyqUsers(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	data["users"] = 1
+
+	render.Template(w, r, "myq-users.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
+}
