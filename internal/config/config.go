@@ -15,4 +15,5 @@ type AppConfig struct {
 	InfoLog       *log.Logger
 	ErrorLog      *log.Logger
 	Session       *scs.SessionManager
+	Environment   string
 }

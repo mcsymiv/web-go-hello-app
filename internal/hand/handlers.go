@@ -76,7 +76,7 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		repo.App.ErrorLog.Println("can not get 'userId' from session")
 		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 		return
 	}
 
@@ -99,7 +99,8 @@ func (repo *Repository) PostQuery(w http.ResponseWriter, r *http.Request) {
 		data["invalid_search"] = search.Query
 		data["invalid_desc"] = search.Description
 
-		http.Error(w, "Invalid form data. Check 'search_query' or 'desc' are required", http.StatusSeeOther)
+		repo.App.ErrorLog.Println("invalid form values, check if 'search_query' or 'desc' are not empty")
+		repo.App.Session.Put(r.Context(), "error", "invalid form value(s)")
 
 		render.Template(w, r, "home.page.tmpl", &models.TemplateData{
 			Form: form,
@@ -129,16 +130,33 @@ func (repo *Repository) QueryResult(w http.ResponseWriter, r *http.Request) {
 		repo.App.ErrorLog.Println("Can not get 'userId' from session")
 		repo.App.Session.Put(r.Context(), "error", "Can not get 'userId' from Session")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+
 		return
 	}
 
 	query := r.URL.Query().Get("query")
+
+	form := forms.New(r.URL.Query())
+	form.Required("query")
+
+	if !form.Valid() {
+		repo.App.ErrorLog.Println("invalid form values, check if 'query' is empty")
+		repo.App.Session.Put(r.Context(), "error", "invalid form value")
+
+		render.Template(w, r, "home.page.tmpl", &models.TemplateData{
+			Form: form,
+		})
+
+		return
+	}
 
 	search, err := repo.DB.GetUserSearchesByUserIdAndPartialTextQuery(userId, query)
 	if err != nil {
 		repo.App.ErrorLog.Println("unable to get searches from DB")
 		repo.App.ErrorLog.Println("unable to get search for user from DB on partial text query", err)
 		http.Redirect(w, r, "/result", http.StatusTemporaryRedirect)
+
+		return
 	}
 
 	data := make(map[string]interface{})
@@ -181,6 +199,7 @@ func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 	form.Required("email", "password")
+
 	if !form.Valid() {
 		repo.App.ErrorLog.Println("required fields are empty, check 'email' or 'password'")
 		render.Template(w, r, "login.page.tmpl", &models.TemplateData{
@@ -221,4 +240,9 @@ func (repo *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 // Dashboard renders all user queries to manage
 func (repo *Repository) Dashboard(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "myq-dashboard.page.tmpl", &models.TemplateData{})
+}
+
+// MyqSearches renders searches
+func (repo *Repository) MyqSearches(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "myq-searches.page.tmpl", &models.TemplateData{})
 }
