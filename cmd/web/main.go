@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/gob"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,17 +18,18 @@ import (
 	"github.com/mcsymiv/web-hello-world/internal/render"
 )
 
-const port = ":8080"
 const postgresPort = "5432"
 
 var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	addr := flag.String("addr", ":8080", "Application port")
+	env := flag.String("env", "uat", "Application environment")
 
-	var args []string = os.Args
+	flag.Parse()
 
-	db, err := run(args)
+	db, err := run(env)
 	if err != nil {
 		log.Println("could not start the app")
 		log.Println("possible solution: 'docker start postgres'")
@@ -38,9 +40,9 @@ func main() {
 		defer db.SQL.Close()
 	}
 
-	log.Println("Started app. Listen on port :8080")
+	log.Println("Started app. Listen on port", *addr)
 	srv := &http.Server{
-		Addr:    port,
+		Addr:    *addr,
 		Handler: routes(&app),
 	}
 
@@ -50,7 +52,7 @@ func main() {
 	}
 }
 
-func run(env []string) (*driver.DB, error) {
+func run(e *string) (*driver.DB, error) {
 
 	// session type declaration
 	gob.Register(models.Search{})
@@ -86,7 +88,7 @@ func run(env []string) (*driver.DB, error) {
 	var repo *hand.Repository
 	var db *driver.DB
 
-	if len(env) == 1 {
+	if *e == "prod" {
 		// connect to postgres
 		log.Println("connecting to db")
 		db, err := driver.ConnectDB(fmt.Sprintf("host=postgres port=%s user=postgres dbname=db password=password", postgresPort))
@@ -96,11 +98,11 @@ func run(env []string) (*driver.DB, error) {
 
 		repo = hand.NewRepo(&app, db)
 
-	} else if env[1] == "dev" {
+	} else if *e == "dev" {
 		log.Println("local db")
 		repo = hand.NewTestRepo(&app)
 
-	} else if env[1] == "uat" {
+	} else if *e == "uat" {
 		log.Println("connecting to local db")
 		db, err = driver.ConnectDB(fmt.Sprintf("host=localhost port=%s user=postgres dbname=db password=password", postgresPort))
 		if err != nil {
