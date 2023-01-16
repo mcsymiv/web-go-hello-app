@@ -42,8 +42,9 @@ func main() {
 
 	app.InfoLog.Println("Started app. Listen on port", *addr)
 	srv := &http.Server{
-		Addr:    *addr,
-		Handler: routes(&app),
+		Addr:     *addr,
+		ErrorLog: app.ErrorLog,
+		Handler:  routes(&app),
 	}
 
 	err = srv.ListenAndServe()
