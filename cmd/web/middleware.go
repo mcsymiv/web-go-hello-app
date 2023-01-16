@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/justinas/nosurf"
@@ -32,7 +31,7 @@ func Authenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !helpers.IsAuthenticated(r) {
 			session.Put(r.Context(), "error", "Log in first!")
-			log.Println("unable to auth user in middleware")
+			app.InfoLog.Println("unable to auth user in middleware")
 			http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 
 			return

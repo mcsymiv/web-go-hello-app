@@ -31,16 +31,16 @@ func main() {
 
 	db, err := run(env)
 	if err != nil {
-		log.Println("could not start the app")
-		log.Println("possible solution: 'docker start postgres'")
-		log.Fatal(err)
+		app.InfoLog.Println("could not start the app")
+		app.InfoLog.Println("possible solution: 'docker start postgres'")
+		app.ErrorLog.Fatal(err)
 	}
 
 	if db != nil {
 		defer db.SQL.Close()
 	}
 
-	log.Println("Started app. Listen on port", *addr)
+	app.InfoLog.Println("Started app. Listen on port", *addr)
 	srv := &http.Server{
 		Addr:    *addr,
 		Handler: routes(&app),
@@ -48,7 +48,7 @@ func main() {
 
 	err = srv.ListenAndServe()
 	if err != nil {
-		log.Fatal(err)
+		app.InfoLog.Fatal(err)
 	}
 }
 
@@ -75,7 +75,7 @@ func run(e *string) (*driver.DB, error) {
 
 	tmplCache, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Println("Can not create template from cache")
+		app.InfoLog.Println("Can not create template from cache")
 		return nil, err
 	}
 
@@ -90,29 +90,29 @@ func run(e *string) (*driver.DB, error) {
 
 	if *e == "prod" {
 		// connect to postgres
-		log.Println("connecting to db")
+		app.InfoLog.Println("connecting to db")
 		db, err := driver.ConnectDB(fmt.Sprintf("host=postgres port=%s user=postgres dbname=db password=password", postgresPort))
 		if err != nil {
-			log.Fatal("cannot connect to db")
+			app.ErrorLog.Fatal("cannot connect to db")
 		}
 
 		repo = hand.NewRepo(&app, db)
 
 	} else if *e == "dev" {
-		log.Println("local db")
+		app.InfoLog.Println("local db")
 		repo = hand.NewTestRepo(&app)
 
 	} else if *e == "uat" {
-		log.Println("connecting to local db")
+		app.InfoLog.Println("connecting to local db")
 		db, err = driver.ConnectDB(fmt.Sprintf("host=localhost port=%s user=postgres dbname=db password=password", postgresPort))
 		if err != nil {
-			log.Fatal("cannot connect to postgres container")
+			app.ErrorLog.Fatal("cannot connect to postgres container")
 		}
 
 		repo = hand.NewRepo(&app, db)
 
 	} else {
-		log.Fatal("invalid arg. Valid 'dev', 'uat' or no arguments")
+		app.ErrorLog.Fatal("invalid arg. Valid 'dev', 'uat' or no arguments")
 	}
 
 	hand.NewHandlers(repo)
