@@ -60,7 +60,7 @@ func run(e *string) (*driver.DB, error) {
 
 	app.InProduction = false
 
-	app.InfoLog = log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime)
+	app.InfoLog = log.New(os.Stdout, "[INFO]\t", log.Ldate|log.Ltime|log.Lshortfile)
 	app.ErrorLog = log.New(os.Stdout, "[ERROR]\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// Sesssion manager settings
