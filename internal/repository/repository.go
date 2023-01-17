@@ -11,4 +11,5 @@ type DatabaseRepo interface {
 	AuthenticateUser(email, password string) (int, string, error)
 	GetUsersCount() (int, error)
 	GetUsers() ([]models.User, error)
+	GetSearchesByUserId(id int) ([]models.Search, error)
 }

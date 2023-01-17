@@ -12,3 +12,13 @@ type Search struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
+
+// SplitSearch model for destructuring search query
+type SplitSearch struct {
+	Id        int
+	Base      string
+	Query     string
+	Link      string
+	Desc      string
+	UpdatedAt time.Time
+}

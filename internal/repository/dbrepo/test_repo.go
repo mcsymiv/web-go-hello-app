@@ -28,6 +28,24 @@ var testSearchModels []models.Search = []models.Search{
 		UpdatedAt:   time.Now(),
 	},
 }
+var users []models.User = []models.User{
+	models.User{
+		Id:          1,
+		UserName:    "test user",
+		Email:       "testuser@mail.com",
+		AccessLevel: 1,
+		CreatedAt:   time.Date(2023, time.May, 21, 3, 10, 3, 0, time.UTC),
+		UpdatedAt:   time.Date(2023, time.September, 21, 3, 10, 3, 0, time.UTC),
+	},
+	models.User{
+		Id:          2,
+		UserName:    "second test user",
+		Email:       "secondtestuser@mail.com",
+		AccessLevel: 2,
+		CreatedAt:   time.Date(2023, time.November, 21, 3, 10, 3, 0, time.UTC),
+		UpdatedAt:   time.Date(2023, time.August, 21, 3, 10, 3, 0, time.UTC),
+	},
+}
 
 func (p *testDbRepo) GetUserSearchByUserIdAndFullTextQuery(userId int, s string) (models.Search, error) {
 
@@ -93,24 +111,8 @@ func (p *testDbRepo) GetUsersCount() (int, error) {
 
 // GetUsers returns all users
 func (p *testDbRepo) GetUsers() ([]models.User, error) {
-	var users = []models.User{
-		models.User{
-			Id:          1,
-			UserName:    "test user",
-			Email:       "testuser@mail.com",
-			AccessLevel: 1,
-			CreatedAt:   time.Date(2023, time.May, 21, 3, 10, 3, 0, time.UTC),
-			UpdatedAt:   time.Date(2023, time.September, 21, 3, 10, 3, 0, time.UTC),
-		},
-		models.User{
-			Id:          2,
-			UserName:    "second test user",
-			Email:       "secondtestuser@mail.com",
-			AccessLevel: 2,
-			CreatedAt:   time.Date(2023, time.November, 21, 3, 10, 3, 0, time.UTC),
-			UpdatedAt:   time.Date(2023, time.August, 21, 3, 10, 3, 0, time.UTC),
-		},
-	}
-
 	return users, nil
+}
+func (p *testDbRepo) GetSearchesByUserId(id int) ([]models.Search, error) {
+	return testSearchModels, nil
 }

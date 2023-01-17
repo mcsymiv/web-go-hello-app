@@ -5,26 +5,74 @@
 {{ end }}
 
 {{ define "css" }}
+		<style>
+				#searches-table {
+						color: #fff;
+				}
+		</style>
 {{ end }}
 
-
 {{ define "content" }}
-		<div class="dash-wrap">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
-						<p>Left col</p>
-					</div>
+		<div class="col-lg-9 col-md-9 p-4">
 
-					<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 p-4">
-						<p>Center column</p>
-					</div>
+				{{ $searches:= index .Data "searches" }}
 
-					<div class="col-lg-2 col-md-2 p-4">
-							<p>Right column</p>
-					</div>
+				<table class="table" id="searches-table">
+				  <thead>
 
-				</div>
-			</div>
+					<tr>
+					  <th scope="col">Id</th>
+					  <th scope="col">Base</th>
+					  <th scope="col">Query</th>
+					  <th scope="col">Description</th>
+					  <th scope="col">Source</th>
+					</tr>
+
+				  </thead>
+				  <tbody>
+
+				{{ range $searches}}
+
+					<tr>
+							<th scope="row">{{ .Id }}</th>
+							<td>{{ .Base }}</td>
+							<td>{{ .Query }}</td>
+							<td>{{ .Desc }}</td>
+							<td>
+									<span>
+											<a href="{{ .Link }}" class="card-link">
+													<i class="bi bi-box-arrow-up-right"></i>
+											</a> 
+											<span class="small-text">
+													{{ humanDate .UpdatedAt }}
+											</span>
+									</span>
+							</td>
+					</tr>
+				{{ end }}
+				
+				  </tbody>
+				</table>
+
 		</div>
+{{ end }}
+
+{{ define "js" }}
+				<script>
+						document.addEventListener("DOMContentLoaded", () => {
+								const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+								const comparer = (idx, asc) => (a, b) => (
+										(v1, v2) => v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+								)(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+								document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+										const table = th.closest('table');
+										const tbody = table.querySelector('tbody');
+										Array.from(tbody.querySelectorAll('tr'))
+												.sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+												.forEach(tr => tbody.appendChild(tr) );
+								})));
+						})
+				</script>
 {{ end }}

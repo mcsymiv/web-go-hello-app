@@ -2,6 +2,7 @@ package hand
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/mcsymiv/web-hello-world/internal/config"
@@ -244,7 +245,44 @@ func (repo *Repository) Dashboard(w http.ResponseWriter, r *http.Request) {
 
 // MyqSearches renders searches
 func (repo *Repository) MyqSearches(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "myq-searches.page.tmpl", &models.TemplateData{})
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
+	if !ok {
+		repo.App.ErrorLog.Println("can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+
+		return
+	}
+
+	searches, err := repo.DB.GetSearchesByUserId(userId)
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to get searches for user")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+
+		return
+	}
+
+	var ssm []models.SplitSearch
+
+	for _, s := range searches {
+		var ss models.SplitSearch = models.SplitSearch{
+			Id:        s.Id,
+			Base:      strings.Split(s.Query, " ")[0],
+			Query:     strings.Join(strings.Split(s.Query, " ")[1:], " "),
+			Link:      s.Link,
+			Desc:      s.Description,
+			UpdatedAt: s.UpdatedAt,
+		}
+
+		ssm = append(ssm, ss)
+	}
+
+	data := make(map[string]interface{})
+	data["searches"] = ssm
+
+	render.Template(w, r, "myq-searches.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }
 
 // MyqUsers shows total users count

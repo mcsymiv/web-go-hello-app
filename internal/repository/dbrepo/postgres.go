@@ -238,3 +238,50 @@ func (p *postgresDBRepo) GetUsers() ([]models.User, error) {
 	return users, nil
 
 }
+
+// GetSearchesByUserId returns all searches
+func (p *postgresDBRepo) GetSearchesByUserId(id int) ([]models.Search, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var searches []models.Search
+
+	q := `
+		select s.id, s.query, s.query_link, s.description, s.updated_at
+		from searches s
+		where s.user_id = $1
+	`
+
+	rows, err := p.DB.QueryContext(ctx, q, id)
+	if err != nil {
+		log.Println("unable to get searches by user id from db")
+		return searches, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var s models.Search
+		err := rows.Scan(
+			&s.Id,
+			&s.Query,
+			&s.Link,
+			&s.Description,
+			&s.UpdatedAt,
+		)
+
+		if err != nil {
+			log.Println("unable to scan searches")
+			return searches, err
+		}
+
+		searches = append(searches, s)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("unable to get searches from db")
+		return searches, err
+	}
+
+	return searches, nil
+}
