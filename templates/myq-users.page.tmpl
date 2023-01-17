@@ -5,10 +5,67 @@
 {{ end }}
 
 {{ define "css" }}
+		<style>
+				#users-table {
+						color: #fff;
+				}
+		</style>
 {{ end }}
 
 {{ define "content" }}
-		<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 p-4">
-				<p>{{ index .Data "users" }}</p>
+		<div class="col-lg-9 col-md-9 p-4">
+
+				{{ $users := index .Data "users" }}
+
+				<table class="table" id="users-table">
+				  <thead>
+
+					<tr>
+					  <th scope="col">Id</th>
+					  <th scope="col">Username</th>
+					  <th scope="col">Email</th>
+					  <th scope="col">Access Level</th>
+					  <th scope="col">Created At</th>
+					  <th scope="col">Updated At</th>
+					</tr>
+
+				  </thead>
+				  <tbody>
+
+				{{ range $users }}
+
+					<tr>
+							<th scope="row">{{ .Id }}</th>
+							<td>{{ .UserName }}</td>
+							<td>{{ .Email }}</td>
+							<td>{{ .AccessLevel }}</td>
+							<td>{{ humanDate .CreatedAt }}</td>
+							<td>{{ humanDate .UpdatedAt }}</td>
+					</tr>
+				{{ end }}
+				
+				  </tbody>
+				</table>
+
 		</div>
+{{ end }}
+
+{{ define "js" }}
+				<script>
+						document.addEventListener("DOMContentLoaded", () => {
+								const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+								const comparer = (idx, asc) => (a, b) => (
+										(v1, v2) => v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+								)(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+								document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+										const table = th.closest('table');
+										const tbody = table.querySelector('tbody');
+										Array.from(tbody.querySelectorAll('tr'))
+												.sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+												.forEach(tr => tbody.appendChild(tr) );
+								})));
+						})
+				</script>
 {{ end }}

@@ -38,7 +38,9 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	mux.Route("/myq", func(mux chi.Router) {
-		mux.Use(Authenticated)
+		if app.InProduction {
+			mux.Use(Authenticated)
+		}
 
 		mux.Get("/dashboard", hand.Repo.Dashboard)
 		mux.Get("/users", hand.Repo.MyqUsers)
