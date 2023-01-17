@@ -8,11 +8,16 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/justinas/nosurf"
 	"github.com/mcsymiv/web-hello-world/internal/config"
 	"github.com/mcsymiv/web-hello-world/internal/models"
 )
+
+var functions = template.FuncMap{
+	"humanDate": HumanDate,
+}
 
 var pathToTemplates string = "./templates"
 var app *config.AppConfig
@@ -20,6 +25,11 @@ var app *config.AppConfig
 // sets the config for the template package
 func NewRenderer(a *config.AppConfig) {
 	app = a
+}
+
+// HumanDate returns time in YYYY-MM-DD format
+func HumanDate(t time.Time) string {
+	return t.Format("2006-01-02")
 }
 
 // AddDefaultTemplateData adds data that can be used across all templates
@@ -83,7 +93,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	// range through all files with match *.page.tmpl
 	for _, page := range pages {
 		name := filepath.Base(page)
-		tmplSet, err := template.New(name).ParseFiles(page)
+		tmplSet, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return tmplCache, err
 		}

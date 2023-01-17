@@ -191,3 +191,50 @@ func (p *postgresDBRepo) GetUsersCount() (int, error) {
 	return uc, nil
 
 }
+
+func (p *postgresDBRepo) GetUsers() ([]models.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var users []models.User
+
+	q := `
+		select u.id, u.username, u.email, u.access_level, u.created_at, u.updated_at
+		from users u
+	`
+
+	rows, err := p.DB.QueryContext(ctx, q)
+	if err != nil {
+		log.Println("unable to get users from db", err)
+		return users, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var u models.User
+		err := rows.Scan(
+			&u.Id,
+			&u.UserName,
+			&u.Email,
+			&u.AccessLevel,
+			&u.CreatedAt,
+			&u.UpdatedAt,
+		)
+
+		if err != nil {
+			log.Println("unable to scan user")
+			return users, err
+		}
+
+		users = append(users, u)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("unable to get users from db")
+		return users, err
+	}
+
+	return users, nil
+
+}

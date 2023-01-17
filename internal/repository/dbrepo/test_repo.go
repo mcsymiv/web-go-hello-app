@@ -90,3 +90,27 @@ func (p *testDbRepo) AuthenticateUser(email, password string) (int, string, erro
 func (p *testDbRepo) GetUsersCount() (int, error) {
 	return 5, nil
 }
+
+// GetUsers returns all users
+func (p *testDbRepo) GetUsers() ([]models.User, error) {
+	var users = []models.User{
+		models.User{
+			Id:          1,
+			UserName:    "test user",
+			Email:       "testuser@mail.com",
+			AccessLevel: 1,
+			CreatedAt:   time.Date(2023, time.May, 21, 3, 10, 3, 0, time.UTC),
+			UpdatedAt:   time.Date(2023, time.September, 21, 3, 10, 3, 0, time.UTC),
+		},
+		models.User{
+			Id:          2,
+			UserName:    "second test user",
+			Email:       "secondtestuser@mail.com",
+			AccessLevel: 2,
+			CreatedAt:   time.Date(2023, time.November, 21, 3, 10, 3, 0, time.UTC),
+			UpdatedAt:   time.Date(2023, time.August, 21, 3, 10, 3, 0, time.UTC),
+		},
+	}
+
+	return users, nil
+}
