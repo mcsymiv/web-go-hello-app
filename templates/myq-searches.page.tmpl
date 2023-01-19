@@ -35,14 +35,15 @@
 
 					<tr>
 							<th scope="row">{{ .Id }}</th>
-							<td>{{ .Base }}</td>
-
 							<td>
 									<a href="/myq/searches/{{ .Id }}/edit">
-										{{ .Query }}
+										{{ .Base }}
 									</a>
 							</td>
+
+							<td>{{ .Query }}</td>
 							<td>{{ .Desc }}</td>
+
 							<td>
 									<span>
 											<a href="{{ .Link }}" class="card-link">

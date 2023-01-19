@@ -302,3 +302,8 @@ func (repo *Repository) MyqUsers(w http.ResponseWriter, r *http.Request) {
 		Data: data,
 	})
 }
+
+// EditMyqSearches shows edit page for search
+func (repo *Repository) EditMyqSearches(w http.ResponseWriter, r *http.Request) {
+
+}
