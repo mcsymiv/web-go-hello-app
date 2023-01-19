@@ -305,5 +305,27 @@ func (repo *Repository) MyqUsers(w http.ResponseWriter, r *http.Request) {
 
 // MyqSearchesEdit shows edit page for search
 func (repo *Repository) MyqSearchesEdit(w http.ResponseWriter, r *http.Request) {
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
+	if !ok {
+		repo.App.ErrorLog.Println("can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
 
+		return
+	}
+
+	search, err := repo.DB.GetUserSearchById(userId, 1)
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to get search for user")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["search"] = search
+
+	render.Template(w, r, "myq-searches-edit.page.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }

@@ -285,3 +285,32 @@ func (p *postgresDBRepo) GetSearchesByUserId(id int) ([]models.Search, error) {
 
 	return searches, nil
 }
+
+// GetUserSearchById returns user search by user and search id
+func (p *postgresDBRepo) GetUserSearchById(userId, searchId int) (models.Search, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var s models.Search
+
+	q := `
+		select s.id, s.query, s.query_link, s.description
+		from searches s
+		where s.user_id = $1 and s.id = $2
+	`
+	row := p.DB.QueryRowContext(ctx, q, userId, searchId)
+
+	err := row.Scan(
+		&s.Id,
+		&s.Query,
+		&s.Link,
+		&s.Description,
+	)
+
+	if err != nil {
+		log.Println("Unable to get search for user")
+		return s, err
+	}
+
+	return s, nil
+}

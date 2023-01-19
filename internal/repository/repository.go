@@ -12,4 +12,5 @@ type DatabaseRepo interface {
 	GetUsersCount() (int, error)
 	GetUsers() ([]models.User, error)
 	GetSearchesByUserId(id int) ([]models.Search, error)
+	GetUserSearchById(userId, searchId int) (models.Search, error)
 }
