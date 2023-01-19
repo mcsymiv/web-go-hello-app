@@ -2,6 +2,7 @@ package hand
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -314,7 +315,16 @@ func (repo *Repository) MyqSearchesView(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	search, err := repo.DB.GetUserSearchById(userId, 1)
+	url := strings.Split(r.RequestURI, "/")
+	searchId, err := strconv.Atoi(url[3])
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to convert path id to int")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	search, err := repo.DB.GetUserSearchById(userId, searchId)
 	if err != nil {
 		repo.App.ErrorLog.Println("unable to get search for user")
 		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
