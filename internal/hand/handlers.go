@@ -303,7 +303,7 @@ func (repo *Repository) MyqUsers(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// EditMyqSearches shows edit page for search
-func (repo *Repository) EditMyqSearches(w http.ResponseWriter, r *http.Request) {
+// MyqSearchesEdit shows edit page for search
+func (repo *Repository) MyqSearchesEdit(w http.ResponseWriter, r *http.Request) {
 
 }
