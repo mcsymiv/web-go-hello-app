@@ -36,7 +36,12 @@
 					<tr>
 							<th scope="row">{{ .Id }}</th>
 							<td>{{ .Base }}</td>
-							<td>{{ .Query }}</td>
+
+							<td>
+									<a href="/myq/searches/{{ .Id }}/edit">
+										{{ .Query }}
+									</a>
+							</td>
 							<td>{{ .Desc }}</td>
 							<td>
 									<span>

@@ -44,7 +44,6 @@ func routes(app *config.AppConfig) http.Handler {
 
 		mux.Get("/dashboard", hand.Repo.Dashboard)
 		mux.Get("/users", hand.Repo.MyqUsers)
-		// mux.Get("/usages", hand.Repo.MyqUsages)
 		mux.Get("/searches", hand.Repo.MyqSearches)
 	})
 
