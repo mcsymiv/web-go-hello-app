@@ -399,12 +399,42 @@ func (repo *Repository) MyqSearchEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repo.App.InfoLog.Println("updating search")
-
 	err = repo.DB.UpdateUserSearch(search, userId)
 	if err != nil {
 		repo.App.ErrorLog.Println("can't update search for user")
 		repo.App.Session.Put(r.Context(), "error", "can't update search for user")
+		http.Redirect(w, r, "/myq/searches", http.StatusTemporaryRedirect)
+
+		return
+	}
+
+	http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+}
+
+// MyqSearchDelete removes user search, returns to searches
+func (repo *Repository) MyqSearchDelete(w http.ResponseWriter, r *http.Request) {
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
+	if !ok {
+		repo.App.ErrorLog.Println("can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	url := strings.Split(r.RequestURI, "/")
+	searchId, err := strconv.Atoi(url[3])
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to convert path id to int")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	err = repo.DB.DeleteUserSearch(searchId, userId)
+	if err != nil {
+		repo.App.ErrorLog.Println("can't remove search for user")
+		repo.App.Session.Put(r.Context(), "error", "can't remove search for user")
 		http.Redirect(w, r, "/myq/searches", http.StatusTemporaryRedirect)
 
 		return

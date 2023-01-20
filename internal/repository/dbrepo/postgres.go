@@ -336,7 +336,7 @@ func (p *postgresDBRepo) UpdateUserSearch(s models.Search, userId int) error {
 }
 
 // DeleteUserSearch removes user search by id and userId
-func (p *postgresDBRepo) DeleteUserSearch(s models.Search, userId int) error {
+func (p *postgresDBRepo) DeleteUserSearch(searchId, userId int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -345,7 +345,7 @@ func (p *postgresDBRepo) DeleteUserSearch(s models.Search, userId int) error {
 		where user_id = $1 and id = $2
 		`
 
-	_, err := p.DB.ExecContext(ctx, i, userId, s.Id)
+	_, err := p.DB.ExecContext(ctx, i, userId, searchId)
 	if err != nil {
 		log.Println("unable to remove the search for user")
 		return err

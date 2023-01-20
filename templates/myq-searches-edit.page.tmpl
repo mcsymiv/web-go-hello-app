@@ -27,6 +27,7 @@
 									   class="form-control underline-input {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
 									   placeholder="Search.."  
 									   name="search_query"
+									   value="{{ $search.Query }}"
 									   {{ if eq $search.Query nil }}
 											   {{ $invalidSearch := index .Data "invalid_search" }}
 											   {{ with $invalidSearch }}

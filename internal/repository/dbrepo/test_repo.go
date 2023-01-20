@@ -130,6 +130,6 @@ func (p *testDbRepo) UpdateUserSearch(s models.Search, userId int) error {
 }
 
 // DeleteUserSearch removes user search by id and userId
-func (p *testDbRepo) DeleteUserSearch(s models.Search, userId int) error {
+func (p *testDbRepo) DeleteUserSearch(searchId, userId int) error {
 	return nil
 }
