@@ -314,3 +314,23 @@ func (p *postgresDBRepo) GetUserSearchById(userId, searchId int) (models.Search,
 
 	return s, nil
 }
+
+// UpdateUserSearch updates user search info by id
+func (p *postgresDBRepo) UpdateUserSearch(s models.Search, userId int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	i := `
+		update searches
+		set query = $1, query_link = $2, description = $3, updated_at = $4
+		where user_id = $5 and id = $6
+		`
+
+	_, err := p.DB.ExecContext(ctx, i, s.Query, s.Link, s.Description, time.Now(), userId, s.Id)
+	if err != nil {
+		log.Println("unable to update the search for user")
+		return err
+	}
+
+	return nil
+}

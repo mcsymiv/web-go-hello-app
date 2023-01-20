@@ -11,11 +11,13 @@
 
 {{ define "content" }}
 		<div class="col-lg-9 col-md-9 p-4">
-				<p>Edit Search page</p>
+				<p>Edit Search</p>
 				{{ $search := index .Data "search" }}
 
 				<form action="/myq/searches/{{ $search.Id}}/edit" method="post">
-					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+						<input type="hidden" name="_method" value="PUT">
+						<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+
   					<div class="mb-3">
 
 						<!-- Search: query input -->
@@ -65,8 +67,17 @@
 						
   					</div>
 
-					<button type="submit" class="btn btn-outline-primary mt-1">Edit</button>
-					<button type="submit" class="btn btn-danger mt-1">Cancel</button>
+					<div class="form-row">
+
+							<div class="form-row btn-group" role="group">
+									<button type="submit" class="btn btn-outline-primary px-4 mt-2">Edit</button>
+							</div>
+
+							<div class="form-row btn-group" role="group">
+									<a href="/myq/searches" class="btn btn-danger d-flex px-4 ms-3 mt-2">Cancel</a>
+							</div>
+
+					</div>
 
 				</form>
 		</div>

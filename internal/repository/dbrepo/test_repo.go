@@ -123,3 +123,8 @@ func (p *testDbRepo) GetSearchesByUserId(id int) ([]models.Search, error) {
 func (p *testDbRepo) GetUserSearchById(userId, searchId int) (models.Search, error) {
 	return testSearchModels[0], nil
 }
+
+// UpdateUserSearch updates user search by id and userId
+func (p *testDbRepo) UpdateUserSearch(s models.Search, userId int) error {
+	return nil
+}
