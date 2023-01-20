@@ -337,5 +337,6 @@ func (repo *Repository) MyqSearchesView(w http.ResponseWriter, r *http.Request) 
 
 	render.Template(w, r, "myq-searches-edit.page.tmpl", &models.TemplateData{
 		Data: data,
+		Form: forms.New(nil),
 	})
 }

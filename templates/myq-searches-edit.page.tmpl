@@ -13,8 +13,62 @@
 		<div class="col-lg-9 col-md-9 p-4">
 				<p>Edit Search page</p>
 				{{ $search := index .Data "search" }}
-				{{ $search.Id }}
-				
+
+				<form action="/myq/searches/{{ $search.Id}}/edit" method="post">
+					<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+  					<div class="mb-3">
+
+						<!-- Search: query input -->
+						<div class="form-row mt-2">
+							<div class="col">
+								<input type="text" 
+									   class="form-control underline-input {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
+									   placeholder="Search.."  
+									   name="search_query"
+									   value="{{ $search.Query }}">
+									   
+								{{ with .Form.Errors.Get "search_query" }}
+								<div class="text-danger small ms-2">
+									 {{ . }}
+								</div>
+								{{ end }}
+							</div>
+						</div>
+
+						<!-- Link: link to the source -->
+						<div class="form-row mt-2">
+								<div class="col">
+										<input type="text"
+											   class="form-control underline-input"
+											   placeholder="Link.."
+											   name="link"
+											   value="{{ $search.Link }}">
+								</div>
+						</div>
+
+						<!-- Description: short answer from the source -->
+						<div class="form-row mt-2">
+								<div class="col">
+										<input type="text"
+											   class="form-control underline-input {{ with .Form.Errors.Get "desc" }}is-invalid{{ end }}"
+											   placeholder="Description.."
+											   name="desc"
+											   value="{{ $search.Description }}">
+
+										{{ with .Form.Errors.Get "desc" }}
+										<div class="text-danger small ms-2">
+											{{ . }}
+										</div>
+										{{ end }}
+								</div>
+						</div>
+						
+  					</div>
+
+					<button type="submit" class="btn btn-outline-primary mt-1">Edit</button>
+					<button type="submit" class="btn btn-danger mt-1">Cancel</button>
+
+				</form>
 		</div>
 {{ end }}
 
