@@ -384,6 +384,10 @@ func (repo *Repository) MyqSearchEdit(w http.ResponseWriter, r *http.Request) {
 	if !form.Valid() {
 		data := make(map[string]interface{})
 
+		data["invalid_link"] = search.Link
+		data["invalid_search"] = search.Query
+		data["invalid_desc"] = search.Description
+
 		repo.App.ErrorLog.Println("invalid form values, check if 'search_query' or 'desc' are not empty")
 		repo.App.Session.Put(r.Context(), "error", "invalid form value(s)")
 

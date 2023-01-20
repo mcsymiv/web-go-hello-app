@@ -27,8 +27,15 @@
 									   class="form-control underline-input {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
 									   placeholder="Search.."  
 									   name="search_query"
-									   value="{{ $search.Query }}">
-									   
+									   {{ if eq $search.Query nil }}
+											   {{ $invalidSearch := index .Data "invalid_search" }}
+											   {{ with $invalidSearch }}
+													   value="{{ . }}"
+											   {{ end }}
+									   {{ else }}
+											   value="{{ $search.Query }}"
+									   {{ end }}>
+
 								{{ with .Form.Errors.Get "search_query" }}
 								<div class="text-danger small ms-2">
 									 {{ . }}
@@ -44,7 +51,14 @@
 											   class="form-control underline-input"
 											   placeholder="Link.."
 											   name="link"
-											   value="{{ $search.Link }}">
+											   {{ if eq $search.Link nil }}
+													   {{ $invalidLink := index .Data "invalid_link" }}
+													   {{ with $invalidLink }}
+															   value="{{ . }}"
+													   {{ end }}
+											   {{ else }}
+													   value="{{ $search.Link }}"
+											   {{ end }}>
 								</div>
 						</div>
 
@@ -55,7 +69,15 @@
 											   class="form-control underline-input {{ with .Form.Errors.Get "desc" }}is-invalid{{ end }}"
 											   placeholder="Description.."
 											   name="desc"
-											   value="{{ $search.Description }}">
+
+											   {{ if eq $search.Description nil }}
+													   {{ $invalidDesc := index .Data "invalid_desc" }}
+													   {{ with $invalidDesc }}
+															   value="{{ . }}"
+													   {{ end }}
+											   {{ else }}
+													   value="{{ $search.Description }}"
+											   {{ end }}>
 
 										{{ with .Form.Errors.Get "desc" }}
 										<div class="text-danger small ms-2">

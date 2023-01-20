@@ -68,20 +68,16 @@
 									   placeholder="Search.."  
 									   name="search_query"
 									   {{ $invalidSearch := index .Data "invalid_search" }}
-									   
 									   {{ with $invalidSearch }}
 											   value="{{ . }}"
-									   {{ end }}
-									   >
+									   {{ end }}>
 
 								<div class="form-text text-muted ms-2 small-text">Keyword or query phrase that describes or narrows the problem.</div>
 								
 								{{ with .Form.Errors.Get "search_query" }}
-
 								<div class="text-danger small ms-2">
 									 {{ . }}
 								</div>
-
 								{{ end }}
 							</div>
 						</div>
@@ -106,20 +102,16 @@
 											   placeholder="Description.."
 											   name="desc"
 											   {{ $invalidDesc := index .Data "invalid_desc" }}
-											   
 											   {{ with $invalidDesc }}
 													   value="{{ . }}"
-											   {{ end }}
-											   >
+											   {{ end }}>
 										
 										<div class="form-text text-muted ms-2 small-text">Short and consice answer from the source.</div>
 										
 										{{ with .Form.Errors.Get "desc" }}
-
 										<div class="text-danger small ms-2">
 											{{ . }}
 										</div>
-
 										{{ end }}
 								</div>
 						</div>
