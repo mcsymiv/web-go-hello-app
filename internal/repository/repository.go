@@ -16,4 +16,6 @@ type DatabaseRepo interface {
 
 	UpdateUser(u models.User) error
 	UpdateUserSearch(s models.Search, userId int) error
+
+	DeleteUserSearch(s models.Search, userId int) error
 }
