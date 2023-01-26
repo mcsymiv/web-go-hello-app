@@ -35,9 +35,10 @@
 						<div class="form-row mt-2">
 							<div class="col">
 								<input type="text" 
-									class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
-									placeholder="Search.."  
-									name="query">
+									   id="main_search"
+									   class="form-control {{ with .Form.Errors.Get "query" }}is-invalid{{ end }}" 
+									   placeholder="⌘s"
+									   name="query">
 
 									{{ with .Form.Errors.Get "query" }}
 										<div class="text-danger small ms-2">
@@ -65,7 +66,7 @@
 							<div class="col">
 								<input type="text" 
 									   class="form-control underline-input {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
-									   placeholder="Search.."  
+									   placeholder="Search.."
 									   name="search_query"
 									   {{ $invalidSearch := index .Data "invalid_search" }}
 									   {{ with $invalidSearch }}
