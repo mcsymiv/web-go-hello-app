@@ -48,9 +48,9 @@ func routes(app *config.AppConfig) http.Handler {
 		mux.Get("/users", hand.Repo.MyqUsers)
 		mux.Get("/searches", hand.Repo.MyqSearches)
 		mux.Get("/searches/{id}/edit", hand.Repo.MyqSearchesView)
+		mux.Get("/searches/{id}/delete", hand.Repo.MyqSearchDelete)
 
 		mux.Put("/searches/{id}/edit", hand.Repo.MyqSearchEdit)
-		mux.Delete("/searches/{id}", hand.Repo.MyqSearchDelete)
 	})
 
 	return mux
