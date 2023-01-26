@@ -19,6 +19,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(NoSurf)
 	// Session
 	mux.Use(SessionLoad)
+	// Method convertion
+	mux.Use(Method)
 
 	// get
 	mux.Get("/", hand.Repo.Index)
@@ -44,8 +46,11 @@ func routes(app *config.AppConfig) http.Handler {
 
 		mux.Get("/dashboard", hand.Repo.Dashboard)
 		mux.Get("/users", hand.Repo.MyqUsers)
-		// mux.Get("/usages", hand.Repo.MyqUsages)
 		mux.Get("/searches", hand.Repo.MyqSearches)
+		mux.Get("/searches/{id}/edit", hand.Repo.MyqSearchesView)
+		mux.Get("/searches/{id}/delete", hand.Repo.MyqSearchDelete)
+
+		mux.Put("/searches/{id}/edit", hand.Repo.MyqSearchEdit)
 	})
 
 	return mux

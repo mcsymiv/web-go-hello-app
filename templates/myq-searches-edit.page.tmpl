@@ -1,0 +1,119 @@
+{{ template "dash" . }}
+
+{{ define "title" }}
+		<title>MyQ Edit Search</title>
+{{ end }}
+
+{{ define "css" }}
+		<style>
+		</style>
+{{ end }}
+
+{{ define "content" }}
+		<div class="col-lg-9 col-md-9 p-4">
+				<p>Edit Search</p>
+				{{ $search := index .Data "search" }}
+
+				<form action="/myq/searches/{{ $search.Id}}/edit" method="post">
+						<input type="hidden" name="_method" value="PUT">
+						<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
+
+  					<div class="mb-3">
+
+						<!-- Search: query input -->
+						<div class="form-row mt-2">
+							<div class="col">
+								<input type="text" 
+									   class="form-control underline-input {{ with .Form.Errors.Get "search_query" }}is-invalid{{ end }}" 
+									   placeholder="Search.."  
+									   name="search_query"
+									   value="{{ $search.Query }}"
+									   {{ if eq $search.Query nil }}
+											   {{ $invalidSearch := index .Data "invalid_search" }}
+											   {{ with $invalidSearch }}
+													   value="{{ . }}"
+											   {{ end }}
+									   {{ else }}
+											   value="{{ $search.Query }}"
+									   {{ end }}>
+
+								{{ with .Form.Errors.Get "search_query" }}
+								<div class="text-danger small ms-2">
+									 {{ . }}
+								</div>
+								{{ end }}
+							</div>
+						</div>
+
+						<!-- Link: link to the source -->
+						<div class="form-row mt-2">
+								<div class="col">
+										<input type="text"
+											   class="form-control underline-input"
+											   placeholder="Link.."
+											   name="link"
+											   {{ if eq $search.Link nil }}
+													   {{ $invalidLink := index .Data "invalid_link" }}
+													   {{ with $invalidLink }}
+															   value="{{ . }}"
+													   {{ end }}
+											   {{ else }}
+													   value="{{ $search.Link }}"
+											   {{ end }}>
+								</div>
+						</div>
+
+						<!-- Description: short answer from the source -->
+						<div class="form-row mt-2">
+								<div class="col">
+										<input type="text"
+											   class="form-control underline-input {{ with .Form.Errors.Get "desc" }}is-invalid{{ end }}"
+											   placeholder="Description.."
+											   name="desc"
+
+											   {{ if eq $search.Description nil }}
+													   {{ $invalidDesc := index .Data "invalid_desc" }}
+													   {{ with $invalidDesc }}
+															   value="{{ . }}"
+													   {{ end }}
+											   {{ else }}
+													   value="{{ $search.Description }}"
+											   {{ end }}>
+
+										{{ with .Form.Errors.Get "desc" }}
+										<div class="text-danger small ms-2">
+											{{ . }}
+										</div>
+										{{ end }}
+								</div>
+						</div>
+						
+  					</div>
+
+					<div class="form-row">
+							<div class="float-start">
+									<div class="form-row btn-group" role="group">
+											<button type="submit" class="btn btn-outline-primary px-4 mt-2">Edit</button>
+									</div>
+
+									<div class="form-row btn-group" role="group">
+											<a href="/myq/searches" class="btn btn-danger d-flex px-4 ms-3 mt-2">Cancel</a>
+									</div>
+							</div>
+
+							<div class="float-end">
+									<div class="form-row btn-group" role="group">
+											<a href="/myq/searches/{{ $search.Id }}/delete" class="btn btn-outline-danger d-flex px-4 ms-3 mt-2">Delete</a>
+									</div>
+							</div>
+
+							<div class="clearfix"></div>
+
+					</div>
+
+				</form>
+		</div>
+{{ end }}
+
+{{ define "js" }}
+{{ end }}

@@ -2,6 +2,7 @@ package hand
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -301,4 +302,143 @@ func (repo *Repository) MyqUsers(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "myq-users.page.tmpl", &models.TemplateData{
 		Data: data,
 	})
+}
+
+// MyqSearchesView shows edit page for search
+func (repo *Repository) MyqSearchesView(w http.ResponseWriter, r *http.Request) {
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
+	if !ok {
+		repo.App.ErrorLog.Println("can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	url := strings.Split(r.RequestURI, "/")
+	searchId, err := strconv.Atoi(url[3])
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to convert path id to int")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	search, err := repo.DB.GetUserSearchById(userId, searchId)
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to get search for user")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["search"] = search
+
+	render.Template(w, r, "myq-searches-edit.page.tmpl", &models.TemplateData{
+		Data: data,
+		Form: forms.New(nil),
+	})
+}
+
+// MyqSearchEdit updates user search, redirects to all searches
+func (repo *Repository) MyqSearchEdit(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		repo.App.ErrorLog.Println("can't parse form")
+		repo.App.Session.Put(r.Context(), "error", "can't parse form")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
+	if !ok {
+		repo.App.ErrorLog.Println("can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	url := strings.Split(r.RequestURI, "/")
+	searchId, err := strconv.Atoi(url[3])
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to convert path id to int")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	search := models.Search{
+		Id:          searchId,
+		Query:       r.Form.Get("search_query"),
+		Link:        r.Form.Get("link"),
+		Description: r.Form.Get("desc"),
+		UserId:      userId,
+	}
+
+	form := forms.New(r.PostForm)
+
+	form.Required("search_query", "desc")
+
+	if !form.Valid() {
+		data := make(map[string]interface{})
+
+		data["invalid_link"] = search.Link
+		data["invalid_search"] = search.Query
+		data["invalid_desc"] = search.Description
+
+		repo.App.ErrorLog.Println("invalid form values, check if 'search_query' or 'desc' are not empty")
+		repo.App.Session.Put(r.Context(), "error", "invalid form value(s)")
+
+		render.Template(w, r, "myq-searches-edit.page.tmpl", &models.TemplateData{
+			Form: form,
+			Data: data,
+		})
+
+		return
+	}
+
+	err = repo.DB.UpdateUserSearch(search, userId)
+	if err != nil {
+		repo.App.ErrorLog.Println("can't update search for user")
+		repo.App.Session.Put(r.Context(), "error", "can't update search for user")
+		http.Redirect(w, r, "/myq/searches", http.StatusTemporaryRedirect)
+
+		return
+	}
+
+	http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+}
+
+// MyqSearchDelete removes user search, returns to searches
+func (repo *Repository) MyqSearchDelete(w http.ResponseWriter, r *http.Request) {
+	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
+	if !ok {
+		repo.App.ErrorLog.Println("can not get 'userId' from session")
+		repo.App.Session.Put(r.Context(), "error", "can not get 'userId' from Session")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	url := strings.Split(r.RequestURI, "/")
+	searchId, err := strconv.Atoi(url[3])
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to convert path id to int")
+		http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
+
+		return
+	}
+
+	err = repo.DB.DeleteUserSearch(searchId, userId)
+	if err != nil {
+		repo.App.ErrorLog.Println("can't remove search for user")
+		repo.App.Session.Put(r.Context(), "error", "can't remove search for user")
+		http.Redirect(w, r, "/myq/searches", http.StatusTemporaryRedirect)
+
+		return
+	}
+
+	http.Redirect(w, r, "/myq/searches", http.StatusSeeOther)
 }

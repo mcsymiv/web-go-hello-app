@@ -285,3 +285,71 @@ func (p *postgresDBRepo) GetSearchesByUserId(id int) ([]models.Search, error) {
 
 	return searches, nil
 }
+
+// GetUserSearchById returns user search by user and search id
+func (p *postgresDBRepo) GetUserSearchById(userId, searchId int) (models.Search, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var s models.Search
+
+	q := `
+		select s.id, s.query, s.query_link, s.description
+		from searches s
+		where s.user_id = $1 and s.id = $2
+	`
+	row := p.DB.QueryRowContext(ctx, q, userId, searchId)
+
+	err := row.Scan(
+		&s.Id,
+		&s.Query,
+		&s.Link,
+		&s.Description,
+	)
+
+	if err != nil {
+		log.Println("Unable to get search for user")
+		return s, err
+	}
+
+	return s, nil
+}
+
+// UpdateUserSearch updates user search info by id
+func (p *postgresDBRepo) UpdateUserSearch(s models.Search, userId int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	i := `
+		update searches
+		set query = $1, query_link = $2, description = $3, updated_at = $4
+		where user_id = $5 and id = $6
+		`
+
+	_, err := p.DB.ExecContext(ctx, i, s.Query, s.Link, s.Description, time.Now(), userId, s.Id)
+	if err != nil {
+		log.Println("unable to update the search for user")
+		return err
+	}
+
+	return nil
+}
+
+// DeleteUserSearch removes user search by id and userId
+func (p *postgresDBRepo) DeleteUserSearch(searchId, userId int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	i := `
+		delete from searches
+		where user_id = $1 and id = $2
+		`
+
+	_, err := p.DB.ExecContext(ctx, i, userId, searchId)
+	if err != nil {
+		log.Println("unable to remove the search for user")
+		return err
+	}
+
+	return nil
+}

@@ -36,9 +36,7 @@ func main() {
 		app.ErrorLog.Fatal(err)
 	}
 
-	if db != nil {
-		defer db.SQL.Close()
-	}
+	defer db.SQL.Close()
 
 	app.InfoLog.Println("Started app. Listen on port", *addr)
 	srv := &http.Server{

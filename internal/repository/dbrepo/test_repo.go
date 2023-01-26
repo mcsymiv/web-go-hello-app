@@ -113,6 +113,23 @@ func (p *testDbRepo) GetUsersCount() (int, error) {
 func (p *testDbRepo) GetUsers() ([]models.User, error) {
 	return users, nil
 }
+
+// GetSearchesByUserId returns all searches by user id
 func (p *testDbRepo) GetSearchesByUserId(id int) ([]models.Search, error) {
 	return testSearchModels, nil
+}
+
+// GetUserSearchById returns user searche by search and user id
+func (p *testDbRepo) GetUserSearchById(userId, searchId int) (models.Search, error) {
+	return testSearchModels[0], nil
+}
+
+// UpdateUserSearch updates user search by id and userId
+func (p *testDbRepo) UpdateUserSearch(s models.Search, userId int) error {
+	return nil
+}
+
+// DeleteUserSearch removes user search by id and userId
+func (p *testDbRepo) DeleteUserSearch(searchId, userId int) error {
+	return nil
 }
