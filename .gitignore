@@ -17,3 +17,6 @@
 
 # Sql scripts
 db_scripts/*
+
+# App binary
+web
