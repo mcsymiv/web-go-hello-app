@@ -13,6 +13,7 @@ import (
 	"github.com/mcsymiv/web-hello-world/internal/render"
 	"github.com/mcsymiv/web-hello-world/internal/repository"
 	"github.com/mcsymiv/web-hello-world/internal/repository/dbrepo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Repo is the repository used by handlers
@@ -186,6 +187,53 @@ func (repo *Repository) Register(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "register.page.tmpl", &models.TemplateData{
 		Form: forms.New(nil),
 	})
+}
+
+// PostRegister creates user redirects to login page
+func (repo *Repository) PostRegister(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		repo.App.InfoLog.Println("unable to parse register form")
+		http.Redirect(w, r, "/user/register", http.StatusSeeOther)
+
+		return
+	}
+
+	form := forms.New(r.PostForm)
+	form.Required("email", "password", "username")
+
+	if !form.Valid() {
+		repo.App.ErrorLog.Println("required fields are empty, check 'email', 'password', 'username'")
+		render.Template(w, r, "register.page.tmpl", &models.TemplateData{
+			Form: form,
+		})
+
+		return
+	}
+
+	email := r.Form.Get("email")
+	username := r.Form.Get("username")
+
+	hash, _ := bcrypt.GenerateFromPassword([]byte(r.Form.Get("password")), 12)
+
+	u := models.User{
+		UserName:    username,
+		Email:       email,
+		Password:    string(hash),
+		AccessLevel: 1,
+	}
+
+	err = repo.DB.AddUser(u)
+	if err != nil {
+		repo.App.ErrorLog.Println("unable to add user", err)
+		repo.App.Session.Put(r.Context(), "error", "invalid data")
+		http.Redirect(w, r, "/user/register", http.StatusSeeOther)
+
+		return
+	}
+
+	repo.App.InfoLog.Println("successfully registered")
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 // Logout, terminates user session, redirects to home page

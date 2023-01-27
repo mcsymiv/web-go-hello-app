@@ -54,6 +54,29 @@
 									</div>
 								  </div>
 
+								<div class="mb-3">
+									<label for="exampleInputUserName1" 
+											class="form-label">User name
+									</label>
+							
+									<input type="text" 
+										   name="username"
+										   class="form-control {{ with .Form.Errors.Get "username" }}is-invalid{{ end}}" 
+										   id="exampleInputUserName1" 
+										   aria-describedby="userNameHelp">
+
+											{{ with .Form.Errors.Get "username" }}
+												<div class="text-danger small ms-2">
+													{{ . }}
+												</div>
+											{{ end }}
+
+									<div id="userNameHelp" 
+										class="form-text">It can be something simple or complex like "myq" or "' or 1=1 -- "
+									</div>
+								  </div>
+
+
 								  <div class="mb-3">
 									<label for="exampleInputPassword1" 
 											class="form-label">Password

@@ -14,6 +14,7 @@ type DatabaseRepo interface {
 	AuthenticateUser(email, password string) (int, string, error)
 	InsertSearch(s models.Search) error
 
+	AddUser(u models.User) error
 	UpdateUser(u models.User) error
 	UpdateUserSearch(s models.Search, userId int) error
 

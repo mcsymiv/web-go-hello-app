@@ -133,3 +133,8 @@ func (p *testDbRepo) UpdateUserSearch(s models.Search, userId int) error {
 func (p *testDbRepo) DeleteUserSearch(searchId, userId int) error {
 	return nil
 }
+
+// AddUser add new user to db
+func (p *testDbRepo) AddUser(u models.User) error {
+	return nil
+}
