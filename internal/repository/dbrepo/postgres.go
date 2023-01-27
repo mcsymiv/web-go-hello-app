@@ -353,3 +353,25 @@ func (p *postgresDBRepo) DeleteUserSearch(searchId, userId int) error {
 
 	return nil
 }
+
+// AddUser adds new user
+func (p *postgresDBRepo) AddUser(u models.User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	i := `
+		insert into 
+		users
+		(username, email, password, created_at, updated_at, access_level)
+		values 
+		($1, $2, $3, $4, $5, $6)
+	`
+
+	_, err := p.DB.ExecContext(ctx, i, u.UserName, u.Email, u.Password, time.Now(), time.Now(), u.AccessLevel)
+	if err != nil {
+		log.Println("unable to insert user")
+		return err
+	}
+
+	return nil
+}

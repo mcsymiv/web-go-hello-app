@@ -1,7 +1,7 @@
 {{ template "base" . }}
 
 {{ define "title" }}
-		<title>Login</title>
+		<title>Register</title>
 {{ end }}
 
 {{ define "css" }}
@@ -28,7 +28,7 @@
 					<div class="col-lg-4 col-md-4 col-sm-2 col-xs-1"></div>
 					
 					<div class="col-lg-4 col-md-4 col-sm-8 col-xs-10">
-						<form action="/user/login" method="post">
+						<form action="/user/register" method="post">
 
 								<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
 
@@ -49,7 +49,33 @@
 												</div>
 											{{ end }}
 
+									<div id="emailHelp" 
+										class="form-text">We'll never share your email with anyone else.
+									</div>
 								  </div>
+
+								<div class="mb-3">
+									<label for="exampleInputUserName1" 
+											class="form-label">User name
+									</label>
+							
+									<input type="text" 
+										   name="username"
+										   class="form-control {{ with .Form.Errors.Get "username" }}is-invalid{{ end}}" 
+										   id="exampleInputUserName1" 
+										   aria-describedby="userNameHelp">
+
+											{{ with .Form.Errors.Get "username" }}
+												<div class="text-danger small ms-2">
+													{{ . }}
+												</div>
+											{{ end }}
+
+									<div id="userNameHelp" 
+										class="form-text">It can be something simple or complex like "myq" or "' or 1=1 -- "
+									</div>
+								  </div>
+
 
 								  <div class="mb-3">
 									<label for="exampleInputPassword1" 
@@ -68,17 +94,7 @@
 											{{ end }}
 								  </div>
 
-								  <div class="mb-3 form-check">
-									<input type="checkbox" 
-										class="form-check-input" 
-										id="exampleCheck1">
-
-									<label class="form-check-label" 
-											for="exampleCheck1">Remember me
-									</label>
-								  </div>
-
-								  <button type="submit" class="btn btn-primary mt-3">Sign in</button>
+								  <button type="submit" class="btn btn-outline-primary mt-3">Register</button>
 						</form>
 					</div>
 

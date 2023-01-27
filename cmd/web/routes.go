@@ -31,10 +31,12 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/result", hand.Repo.QueryResult)
 	mux.Get("/user/login", hand.Repo.Login)
 	mux.Get("/user/logout", hand.Repo.Logout)
+	mux.Get("/user/register", hand.Repo.Register)
 
 	// post
 	mux.Post("/query", hand.Repo.PostQuery)
 	mux.Post("/user/login", hand.Repo.PostLogin)
+	mux.Post("/user/register", hand.Repo.PostRegister)
 
 	var fileServer http.Handler = http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
