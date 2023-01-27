@@ -31,6 +31,7 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/result", hand.Repo.QueryResult)
 	mux.Get("/user/login", hand.Repo.Login)
 	mux.Get("/user/logout", hand.Repo.Logout)
+	mux.Get("/user/register", hand.Repo.Register)
 
 	// post
 	mux.Post("/query", hand.Repo.PostQuery)

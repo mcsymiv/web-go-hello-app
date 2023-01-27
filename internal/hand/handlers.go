@@ -181,6 +181,13 @@ func (repo *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Register renders sign up form
+func (repo *Repository) Register(w http.ResponseWriter, r *http.Request) {
+	render.Template(w, r, "register.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
 // Logout, terminates user session, redirects to home page
 func (repo *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	_ = repo.App.Session.Destroy(r.Context())
