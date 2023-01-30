@@ -18,8 +18,8 @@ Well, now i can add specific query as part of my own '*search vocabulary*' and p
 back-end: [chi](https://github.com/go-chi/chi), [scs](https://github.com/alexedwards/scs), [nosurf](https://github.com/justinas/nosurf), [pgx](https://github.com/jackc/pgx), [postgres](https://hub.docker.com/_/postgres) image, docker  
 front-end: [http/tmpl](https://pkg.go.dev/html/template), [bootstrap](https://getbootstrap.com/), [sweatAlert2](https://sweetalert2.github.io/)  
 
-Run appication  
-Start postgres container:
+#### Application setup: 
+Postgres container
 ```
 docker run --name postgres \
   --network=myq_network \
@@ -35,8 +35,10 @@ docker run --name postgres \
   
 > don't forget to specify postgres variables according to your environment.  
 
-Create DB users and searches tables. I used a custom sql script against running container:  
-```cat db_scripts/CreateSearchAndUserTables.sql | docker exec -i postgres psql -U postgres -h localhost -p 5432 -d db```
+Create DB users and searches tables. I used a custom sql script against running container:
+```
+cat db_scripts/CreateSearchAndUserTables.sql | docker exec -i postgres psql -U postgres -h localhost -p 5432 -d db
+```  
 But you can dump .sql file to the container and run it from within postgres container:  
 ```
 docker cp ./dump.sql postgres:/docker-entrypoint-initdb.d/dump.sql  
@@ -45,10 +47,36 @@ docker exec -u postgres postgres psql db postgres -f docker-entrypoint-initdb.d/
 General form to the last line of code is:  
 ```
 docker exec -u postgresuser containername psql dbname postgresuser -f /container/path/file.sql
-```
+```  
+
+After postgres setup your DB should have two tables for searches and users.
 Users table:  
-   id   |   username   |   email   |   password   |   created_at   |   updated_at   |   access_level   
---------+--------------+-----------+--------------+----------------+----------------+-----------------
+
+|   id   |   username   |   email   |   password   |   created_at   |   updated_at   |   access_level   |  
+| ------ | ------------ | --------- | ------------ | -------------- | -------------- | ---------------- |  
+
 Searches table:  
-   id   |   user_id   |   query   |   query_link   |   description   |   created_at   |   updated_at
---------+-------------+-----------+----------------+-----------------+----------------+---------------
+|   id   |   user_id   |   query   |   query_link   |   description   |   created_at   |   updated_at   |  
+| ------ | ----------- | --------- | -------------- | --------------- | -------------- | -------------- |  
+
+#### Start application
+`init.sh` script has predefined values for the application environment. Postgres values, prod env, server address:  
+```
+$ go run ./cmd/web -h
+  -addr string
+    	Application port (default ":8080")
+  -cache
+    	Use cache
+  -dbhost string
+    	DB host (default "localhost")
+  -dbname string
+    	DB name (default "db")
+  -dbpass string
+    	DB password
+  -dbport string
+    	DB port (default "5432")
+  -dbuser string
+    	DB user (default "postgres")
+  -prod
+    	In production
+```
