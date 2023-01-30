@@ -1,11 +1,14 @@
 # web-go-hello-app (MyQ)
-#### educational web-app based on and inspired by Trevor Sawler "Bookings" Go project on [udemy](https://www.udemy.com/course/building-modern-web-applications-with-go/)
+#### Educational web-app based on and inspired by Trevor Sawler "Bookings" Go project on [udemy](https://www.udemy.com/course/building-modern-web-applications-with-go/)
 
 #### App
-MyQ allows me to add and search specific queries that I forget.   
+MyQ allows me to add and search specific queries that I forget.  
 
 I always have a trouble to remember 'How do I cut word in vim?', 'What was that command for ARP cache?' or 'What I've typed in Google that directed me to that link on SO?'.  
-Well, now i can add specific query as part of my own '*search vocabulary*' and provide consice answer or short description with source link. Without a SMM lifestories in the blog pages. And/or without Google's understanding of my understanding of what I actually want to find or what I mean.
+
+Well, now i can add specific query as part of my own '*query*' and provide consice answer or short description with source link. Without a SMM lifestories in the blog pages. And/or without Google's understanding of my understanding of what I actually want to find or what I mean.  
+
+Basically, it's a monolithic note app where I store specific answers to the generall questions that are part of my own *search vocabulary*.
 
 1. Add your query:
 <img width="1440" alt="image" src="https://user-images.githubusercontent.com/45435157/206728981-8ae9a398-67c5-465e-9847-5f2ae1f4d207.png">
@@ -49,13 +52,13 @@ General form to the last line of code is:
 docker exec -u postgresuser containername psql dbname postgresuser -f /container/path/file.sql
 ```  
 
-After postgres setup your DB should have two tables for searches and users.
-Users table:  
+After postgres is setup, your DB should have two tables for searches and users.  
+Users:  
 
 |   id   |   username   |   email   |   password   |   created_at   |   updated_at   |   access_level   |  
 | ------ | ------------ | --------- | ------------ | -------------- | -------------- | ---------------- |  
 
-Searches table:  
+Searches:  
 |   id   |   user_id   |   query   |   query_link   |   description   |   created_at   |   updated_at   |  
 | ------ | ----------- | --------- | -------------- | --------------- | -------------- | -------------- |  
 
