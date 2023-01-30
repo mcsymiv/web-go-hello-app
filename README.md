@@ -4,11 +4,11 @@
 #### App
 MyQ allows me to add and search specific queries that I forget.  
 
-I always have a trouble to remember 'How do I cut word in vim?', 'What was that command for ARP cache?' or 'What I've typed in Google that directed me to that link on SO?'.  
+I always have a trouble to remember 'How do I cut word in vim?', 'What was that command for ARP cache?' or 'What I've typed in Google that directed me to that link on SO about postgres setup?'.  
 
-Well, now i can add specific query as part of my own '*query*' and provide consice answer or short description with source link. Without a SMM lifestories in the blog pages. And/or without Google's understanding of my understanding of what I actually want to find or what I mean.  
+Well, now I can add specific query and provide consice answer or short description with optional source link. Without a SMM lifestories in the blog pages. And/or without Google's understanding of my understanding of what I actually want to find or what I mean. And move all purple links to MyQ. 
 
-Basically, it's a monolithic note app where I store specific answers to the generall questions that are part of my own *search vocabulary*.
+Basically, it's a note app where I store answers to the general questions which are part of my own **search vocabulary**.
 
 1. Add your query:
 <img width="1440" alt="image" src="https://user-images.githubusercontent.com/45435157/206728981-8ae9a398-67c5-465e-9847-5f2ae1f4d207.png">
