@@ -78,8 +78,17 @@
 							<button class="btn btn-outline-secondary" type="submit">Logout</button>
 						</a>
 				{{ else }}
-						<a id="login-btn" class="login-btn d-flex me-5" href="/user/login">
+						<a id="login-btn" class="login-btn d-flex me-2" href="/user/login">
 							<button class="btn btn-outline-primary" type="submit">Login</button>
+						</a>
+
+						<a id="registration-btn"
+						   class="registration-btn d-flex me-5"
+						   href="/user/registration">
+								<button class="btn btn-primary"
+										type="submit">
+										Sigh up
+								</button>
 						</a>
 				{{ end }}
 			</div>
