@@ -1,0 +1,98 @@
+{{ template "base" . }}
+
+{{ define "title" }}
+		<title>MyQ</title>
+{{ end }}
+
+{{ define "css" }}
+	<style>
+		p {
+			font-family: 'Montserrat', sans-serif;
+		}
+		.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: #ccc;
+            opacity: .7; /* Firefox */
+		}
+		.small-text {
+				font-size: smaller;
+		}
+	</style>
+{{ end }}
+
+
+{{ define "content" }}
+	<div class="container">
+		<div class="row m-3">
+			<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 p-4">
+
+				<!-- Search form by query -->
+				<form action="" method="">
+  					<div class="mb-3">
+
+						<!-- Search: query input -->
+						<div class="form-row mt-2">
+							<div class="col">
+								<input type="text" 
+									   id="main_search"
+									   class="form-control"
+									   placeholder="⌘s"
+									   name="query">
+							</div>
+						</div>
+
+  					</div>
+
+  					<button type="submit" class="btn btn-outline-info">Search</button>
+				</form>
+			</div>
+
+			<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12 p-4">
+				<h1 class="mb-3 ms-3">Add search/query</h1>
+				<form action="" method="">
+  					<div class="mb-3">
+
+						<!-- Search: query input -->
+						<div class="form-row mt-2">
+							<div class="col">
+								<input type="text" 
+									   class="form-control underline-input"
+									   placeholder="Search.."
+									   name="search_query"
+
+								<div class="form-text text-muted ms-2 small-text">Keyword or query phrase that describes or narrows the problem.</div>
+							</div>
+						</div>
+
+						<!-- Link: link to the source -->
+						<div class="form-row mt-2">
+								<div class="col">
+										<input type="text"
+											   class="form-control underline-input"
+											   placeholder="Link.."
+											   name="link"
+											   value="">
+										<div class="form-text text-muted ms-2 small-text">Source that confirmes or shows solution to the problem (optional).</div>
+								</div>
+						</div>
+
+						<!-- Description: short answer from the source -->
+						<div class="form-row mt-2">
+								<div class="col">
+										<input type="text"
+											   class="form-control underline-input"
+											   placeholder="Description.."
+											   name="desc">
+										
+										<div class="form-text text-muted ms-2 small-text">Short and consice answer from the source.</div>
+								</div>
+						</div>
+						
+  					</div>
+				</form>
+
+			</div>
+
+			<div class="col-lg-1 col-md-1"></div>
+		</div>
+	</div>
+{{ end }}
