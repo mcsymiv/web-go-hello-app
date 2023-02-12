@@ -281,7 +281,7 @@ func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	repo.App.InfoLog.Println("successfully authenticated")
 	repo.App.Session.Put(r.Context(), "userId", id)
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
 
 }
 
