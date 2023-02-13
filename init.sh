@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 #
 # Starts application
-#
+
+if [ -f ./web ]; then
+		echo "removing previous build web"
+		rm ./web
+fi
 
 go build ./cmd/web
 

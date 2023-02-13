@@ -49,7 +49,8 @@ func NewHandlers(r *Repository) {
 
 // Index renders home page and puts user id into session
 func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/home", http.StatusSeeOther)
+	//http.Redirect(w, r, "/home", http.StatusSeeOther)
+	render.Template(w, r, "index.page.tmpl", &models.TemplateData{})
 }
 
 // Home renders home MyQ page
@@ -280,7 +281,7 @@ func (repo *Repository) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	repo.App.InfoLog.Println("successfully authenticated")
 	repo.App.Session.Put(r.Context(), "userId", id)
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
 
 }
 
