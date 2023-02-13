@@ -342,24 +342,6 @@ func (repo *Repository) MyqSearches(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// MyqUsers shows total users count
-func (repo *Repository) MyqUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := repo.DB.GetUsers()
-	if err != nil {
-		repo.App.ErrorLog.Println("unable to get user count from DB", err)
-		http.Redirect(w, r, "/myq/dashboard", http.StatusTemporaryRedirect)
-
-		return
-	}
-
-	data := make(map[string]interface{})
-	data["users"] = users
-
-	render.Template(w, r, "myq-users.page.tmpl", &models.TemplateData{
-		Data: data,
-	})
-}
-
 // MyqSearchesView shows edit page for search
 func (repo *Repository) MyqSearchesView(w http.ResponseWriter, r *http.Request) {
 	userId, ok := repo.App.Session.Get(r.Context(), "userId").(int)
