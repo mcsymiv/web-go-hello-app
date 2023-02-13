@@ -25,19 +25,16 @@
 {{ define "content" }}
 	<div class="container">
 			<div class="row mt-4">
-					<div class="col-lg-4 col-md-4 col-sm-2 col-xs-1"></div>
+					<div class="col-lg-3 col-md-3 col-sm-2 col-xs-1"></div>
 					
-					<div class="col-lg-4 col-md-4 col-sm-8 col-xs-10">
+					<div class="col-lg-6 col-md-6 col-sm-8 col-xs-10">
 						<form action="/user/register" method="post">
 
 								<input type="hidden" name="csrf_token" value="{{ .CSRFToken }}">
 
 								<div class="mb-3">
-									<label for="exampleInputEmail1" 
-											class="form-label">Email address
-									</label>
-							
 									<input type="email" 
+										   placeholder="Email"
 										   name="email"
 										   class="form-control {{ with .Form.Errors.Get "email" }}is-invalid{{ end}}" 
 										   id="exampleInputEmail1" 
@@ -50,16 +47,13 @@
 											{{ end }}
 
 									<div id="emailHelp" 
-										class="form-text">We'll never share your email with anyone else.
+										class="form-text ms-2">We'll never share your email with anyone else.
 									</div>
 								  </div>
 
 								<div class="mb-3">
-									<label for="exampleInputUserName1" 
-											class="form-label">User name
-									</label>
-							
 									<input type="text" 
+										   placeholder="Username"
 										   name="username"
 										   class="form-control {{ with .Form.Errors.Get "username" }}is-invalid{{ end}}" 
 										   id="exampleInputUserName1" 
@@ -72,17 +66,14 @@
 											{{ end }}
 
 									<div id="userNameHelp" 
-										class="form-text">It can be something simple or complex like "myq" or "' or 1=1 -- "
+										class="form-text ms-2">It can be something simple like "myq" or complex like "' or 1=1 -- "
 									</div>
 								  </div>
 
 
 								  <div class="mb-3">
-									<label for="exampleInputPassword1" 
-											class="form-label">Password
-									</label>
-
 									<input type="password" 
+										   placeholder="Password"
 										   name="password"
 										   class="form-control {{ with .Form.Errors.Get "password" }}is-invalid{{ end }}" 
 										   id="exampleInputPassword1">
@@ -98,7 +89,7 @@
 						</form>
 					</div>
 
-					<div class="col-lg-4 col-md-4 col-sm-2 col-xs-1"></div>
+					<div class="col-lg-3 col-md-3 col-sm-2 col-xs-1"></div>
 			</div>
 	</div>
 {{ end }}
