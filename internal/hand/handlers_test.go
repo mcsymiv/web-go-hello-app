@@ -21,9 +21,13 @@ var testGetHandlers = []struct {
 	method     string
 	statusCode int
 }{
-	{"home", "/", "GET", http.StatusOK},
+	{"home", "/home", "GET", http.StatusOK},
 	{"about", "/about", "GET", http.StatusOK},
 	{"contact", "/contact", "GET", http.StatusOK},
+	{"login", "/user/login", "GET", http.StatusOK},
+	{"logout", "/user/logout", "GET", http.StatusOK},
+	{"register", "/user/register", "GET", http.StatusOK},
+	{"myq dashboard", "/myq/dashboard", "GET", http.StatusOK},
 }
 
 func TestHandlers(t *testing.T) {
