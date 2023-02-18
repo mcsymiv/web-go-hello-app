@@ -30,26 +30,72 @@ var testGetHandlers = []struct {
 	{"myq dashboard", "/myq/dashboard", "GET", http.StatusOK},
 }
 
-func TestHandlers(t *testing.T) {
-	routes := getRoutes()
+// testHandler contains testing server and client
+// Global testing server for all handler tests
+// Purpose of a testing struct is to separate
+// all endpoint tests into separate TestMethods
+// which supposedly must create better test maintenance
+// in the future, even though it brakes DRY principle with test table approach
+type testHandlers struct {
+	server *httptest.Server
+	client *http.Client
+}
 
-	// creates test server for the lifetime of the test
-	testServer := httptest.NewTLSServer(routes)
+// handlerSetup returns testHandler
+// serves as BeforeAll method for all hanler tests
+func handlerSetup() *testHandlers {
+	r := getRoutes()
+	s := httptest.NewTLSServer(r)
+	c := s.Client()
 
-	// closes server after test is done
-	defer testServer.Close()
-
-	for _, test := range testGetHandlers {
-		res, err := testServer.Client().Get(testServer.URL + test.url)
-		if err != nil {
-			t.Log(err)
-			t.Fatal(err)
-		}
-
-		if res.StatusCode != test.statusCode {
-			t.Errorf("%s failed with invalid status code. Expected: %d. But was: %d", test.name, test.statusCode, res.StatusCode)
-		}
+	return &testHandlers{
+		server: s,
+		client: c,
 	}
+}
+
+// handlerTearDown closes server
+// a hack to not use defer server.Close()
+func (s *testHandlers) handlerTearDown() {
+	s.server.Close()
+}
+
+func (s *testHandlers) TestIndex(t *testing.T) {
+	res, err := s.client.Get(s.server.URL + "/")
+	if err != nil {
+		t.Log(err)
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("index endpoint failed with invalid status code. Expected: %d. But was: %d", http.StatusOK, res.StatusCode)
+	}
+}
+
+func (s *testHandlers) TestHome(t *testing.T) {
+	res, err := s.client.Get(s.server.URL + "/home")
+	if err != nil {
+		t.Log(err)
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("home endpoint failed with invalid status code. Expected: %d. But was: %d", http.StatusOK, res.StatusCode)
+	}
+
+}
+
+func (s *testHandlers) TestAbout(t *testing.T) {
+	res, err := s.client.Get(s.server.URL + "/about")
+	if err != nil {
+		t.Log(err)
+		t.Fatal(err)
+	}
+
+	if res.StatusCode != http.StatusOK {
+		t.Errorf("home endpoint failed with invalid status code. Expected: %d. But was: %d", http.StatusOK, res.StatusCode)
+	}
+
 }
 
 func TestRepository_Success_QueryResult(t *testing.T) {

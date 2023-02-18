@@ -55,7 +55,13 @@ func TestMain(m *testing.M) {
 
 	render.NewRenderer(&app)
 
-	os.Exit(m.Run())
+	// setup
+	s := handlerSetup()
+	run := m.Run()
+	// teardown
+	s.handlerTearDown()
+
+	os.Exit(run)
 }
 
 func getRoutes() http.Handler {
@@ -84,6 +90,8 @@ func getRoutes() http.Handler {
 	// myq
 	mux.Get("/myq/dashboard", Repo.Dashboard)
 	mux.Get("/myq/searches", Repo.MyqSearches)
+	mux.Get("/searches/{id}/edit", Repo.MyqSearchesView)
+	mux.Get("/searches/{id}/delete", Repo.MyqSearchDelete)
 
 	var fileServer http.Handler = http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))

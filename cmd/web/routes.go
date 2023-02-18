@@ -25,7 +25,6 @@ func routes(app *config.AppConfig) http.Handler {
 	// get
 	mux.Get("/", hand.Repo.Index)
 	mux.Get("/home", hand.Repo.Home)
-	//	mux.Get("/query", hand.Repo.Query)
 	mux.Get("/about", hand.Repo.About)
 	mux.Get("/contact", hand.Repo.Contact)
 	mux.Get("/result", hand.Repo.QueryResult)
