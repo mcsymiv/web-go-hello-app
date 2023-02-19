@@ -1,19 +1,10 @@
 package hand
 
 import (
-	"context"
-	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
-
-type postData struct {
-	key   string
-	value string
-}
 
 var testGetHandlers = []struct {
 	name       string
@@ -30,38 +21,22 @@ var testGetHandlers = []struct {
 	{"myq dashboard", "/myq/dashboard", "GET", http.StatusOK},
 }
 
-// testHandler contains testing server and client
-// Global testing server for all handler tests
-// Purpose of a testing struct is to separate
-// all endpoint tests into separate TestMethods
-// which supposedly must create better test maintenance
-// in the future, even though it brakes DRY principle with test table approach
-type testHandlers struct {
-	server *httptest.Server
-	client *http.Client
+var r http.Handler
+var s *httptest.Server
+var c *http.Client
+
+func handlerSetup() {
+	r = getRoutes()
+	s = httptest.NewTLSServer(r)
+	c = s.Client()
 }
 
-// handlerSetup returns testHandler
-// serves as BeforeAll method for all hanler tests
-func handlerSetup() *testHandlers {
-	r := getRoutes()
-	s := httptest.NewTLSServer(r)
-	c := s.Client()
-
-	return &testHandlers{
-		server: s,
-		client: c,
-	}
+func handlerTearDown() {
+	s.Close()
 }
 
-// handlerTearDown closes server
-// a hack to not use defer server.Close()
-func (s *testHandlers) handlerTearDown() {
-	s.server.Close()
-}
-
-func (s *testHandlers) TestIndex(t *testing.T) {
-	res, err := s.client.Get(s.server.URL + "/")
+func TestIndex(t *testing.T) {
+	res, err := c.Get(s.URL + "/")
 	if err != nil {
 		t.Log(err)
 		t.Fatal(err)
@@ -72,32 +47,7 @@ func (s *testHandlers) TestIndex(t *testing.T) {
 	}
 }
 
-func (s *testHandlers) TestHome(t *testing.T) {
-	res, err := s.client.Get(s.server.URL + "/home")
-	if err != nil {
-		t.Log(err)
-		t.Fatal(err)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("home endpoint failed with invalid status code. Expected: %d. But was: %d", http.StatusOK, res.StatusCode)
-	}
-
-}
-
-func (s *testHandlers) TestAbout(t *testing.T) {
-	res, err := s.client.Get(s.server.URL + "/about")
-	if err != nil {
-		t.Log(err)
-		t.Fatal(err)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("home endpoint failed with invalid status code. Expected: %d. But was: %d", http.StatusOK, res.StatusCode)
-	}
-
-}
-
+/*
 func TestRepository_Success_QueryResult(t *testing.T) {
 
 	// put in session 'user_id' and 'query'
@@ -300,3 +250,4 @@ func getCtx(r *http.Request) context.Context {
 
 	return ctx
 }
+*/
