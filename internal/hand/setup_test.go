@@ -56,10 +56,10 @@ func TestMain(m *testing.M) {
 	render.NewRenderer(&app)
 
 	// setup
-	handlerSetup()
+	h := handlerSetup()
 	run := m.Run()
 	// teardown
-	handlerTearDown()
+	h.handlerTearDown()
 
 	os.Exit(run)
 }

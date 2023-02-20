@@ -6,44 +6,60 @@ import (
 	"testing"
 )
 
-var testGetHandlers = []struct {
-	name       string
-	url        string
-	method     string
-	statusCode int
-}{
-	{"home", "/home", "GET", http.StatusOK},
-	{"about", "/about", "GET", http.StatusOK},
-	{"contact", "/contact", "GET", http.StatusOK},
-	{"login", "/user/login", "GET", http.StatusOK},
-	{"logout", "/user/logout", "GET", http.StatusOK},
-	{"register", "/user/register", "GET", http.StatusOK},
-	{"myq dashboard", "/myq/dashboard", "GET", http.StatusOK},
+type testHandler struct {
+	routes http.Handler
+	server *httptest.Server
+	client *http.Client
+	paths  map[string]string
 }
 
-var r http.Handler
-var s *httptest.Server
-var c *http.Client
+var h *testHandler
 
-func handlerSetup() {
-	r = getRoutes()
-	s = httptest.NewTLSServer(r)
-	c = s.Client()
-}
+// handlerSetup
+// Creates one testing server, client
+// for all handler routes checks
+func handlerSetup() *testHandler {
+	r := getRoutes()
+	s := httptest.NewTLSServer(r)
+	c := s.Client()
 
-func handlerTearDown() {
-	s.Close()
-}
-
-func TestIndex(t *testing.T) {
-	res, err := c.Get(s.URL + "/")
-	if err != nil {
-		t.Log(err)
-		t.Fatal(err)
+	h = &testHandler{
+		routes: r,
+		server: s,
+		client: c,
+		paths: map[string]string{
+			"index":    "/",
+			"home":     "/home",
+			"about":    "/about",
+			"contact":  "/contact",
+			"login":    "/user/login",
+			"logout":   "/user/logout",
+			"register": "/user/register",
+		},
 	}
 
-	if res.StatusCode != http.StatusOK {
-		t.Errorf("index endpoint failed with invalid status code. Expected: %d. But was: %d", http.StatusOK, res.StatusCode)
+	return h
+}
+
+// handlerTearDown
+// references testHandler server for closing
+func (h *testHandler) handlerTearDown() {
+	h.server.Close()
+}
+
+// TestRoutePaths performs status check
+// on GET handler routes
+func TestRoutePaths(t *testing.T) {
+	for _, p := range h.paths {
+		res, err := h.client.Get(h.server.URL + p)
+		if err != nil {
+			t.Log(err)
+			t.Fatal(err)
+		}
+
+		if res.StatusCode != http.StatusOK {
+			t.Errorf("%s endpoint failed with invalid status code. Expected: %d. But was: %d", p, http.StatusOK, res.StatusCode)
+		}
 	}
 }
 
