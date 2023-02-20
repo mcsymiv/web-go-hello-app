@@ -55,7 +55,13 @@ func TestMain(m *testing.M) {
 
 	render.NewRenderer(&app)
 
-	os.Exit(m.Run())
+	// setup
+	h := handlerSetup()
+	run := m.Run()
+	// teardown
+	h.handlerTearDown()
+
+	os.Exit(run)
 }
 
 func getRoutes() http.Handler {
@@ -74,14 +80,18 @@ func getRoutes() http.Handler {
 	// get
 	mux.Get("/", Repo.Index)
 	mux.Get("/home", Repo.Home)
-	//	mux.Get("/query", Repo.Query)
 	mux.Get("/about", Repo.About)
-	mux.Get("/exit", Repo.Exit) // kills app
 	mux.Get("/contact", Repo.Contact)
 	mux.Get("/result", Repo.QueryResult)
+	mux.Get("/user/login", Repo.Login)
+	mux.Get("/user/logout", Repo.Logout)
+	mux.Get("/user/register", Repo.Register)
 
-	// post
-	mux.Post("/query", Repo.PostQuery)
+	// myq
+	mux.Get("/myq/dashboard", Repo.Dashboard)
+	mux.Get("/myq/searches", Repo.MyqSearches)
+	mux.Get("/searches/{id}/edit", Repo.MyqSearchesView)
+	mux.Get("/searches/{id}/delete", Repo.MyqSearchDelete)
 
 	var fileServer http.Handler = http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
