@@ -89,7 +89,6 @@ func TestRepository_Success_QueryResult(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	session.Put(ctx, "userId", u)
-	session.Put(ctx, "query", q)
 
 	h := http.HandlerFunc(Repo.QueryResult)
 
@@ -100,22 +99,23 @@ func TestRepository_Success_QueryResult(t *testing.T) {
 	}
 }
 
-/*
-	func TestRepository_Redirect_Without_UserId_And_Query_In_Session_QueryResult(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/result", nil)
-		ctx := getCtx(req)
-		req = req.WithContext(ctx)
+func TestRepository_Redirect_Without_UserId_And_Query_In_Session_QueryResult(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/result", nil)
+	ctx := getCtx(req)
+	req = req.WithContext(ctx)
 
-		rr := httptest.NewRecorder()
+	rr := httptest.NewRecorder()
 
-		h := http.HandlerFunc(Repo.QueryResult)
+	h := http.HandlerFunc(Repo.QueryResult)
 
-		h.ServeHTTP(rr, req)
+	h.ServeHTTP(rr, req)
 
-		if rr.Code != http.StatusTemporaryRedirect {
-			t.Errorf("failed get /result without 'user_id' and 'query' in session, expected status %d, but was: %d", http.StatusTemporaryRedirect, rr.Code)
-		}
+	if rr.Code != http.StatusTemporaryRedirect {
+		t.Errorf("failed get /result without 'user_id' and 'query' in session, expected status %d, but was: %d", http.StatusTemporaryRedirect, rr.Code)
 	}
+}
+
+/*
 
 	func TestRepository_Success_WithoutQueryInSession_QueryResult(t *testing.T) {
 		var u int = 1
