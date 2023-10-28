@@ -49,8 +49,7 @@ func NewHandlers(r *Repository) {
 
 // Index renders home page and puts user id into session
 func (repo *Repository) Index(w http.ResponseWriter, r *http.Request) {
-	//http.Redirect(w, r, "/home", http.StatusSeeOther)
-	render.Template(w, r, "index.page.tmpl", &models.TemplateData{})
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
 // Home renders home MyQ page
