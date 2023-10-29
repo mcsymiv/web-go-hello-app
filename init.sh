@@ -12,7 +12,7 @@ go build ./cmd/web
 ./web \
 		-prod=false \
 		-cache=false \
-		-addr=:8080 \
+		-addr=:8099 \
 		-dbhost=localhost \
 		-dbuser=postgres \
 		-dbname=db \
