@@ -7,9 +7,9 @@ if [ -f ./web ]; then
 		rm ./web
 fi
 
-go build ./cmd/web
+go build -o ./bin ./cmd/web
 
-./web \
+./bin/web \
 		-prod=false \
 		-cache=false \
 		-addr=:8080 \
